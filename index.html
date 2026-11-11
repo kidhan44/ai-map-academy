@@ -1,0 +1,776 @@
+<title>AI MAP學苑</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: 米白底的課程地圖。首屏是主張與數字，下方依序是分布圖、矩陣、知識圖譜、同仁關聯、六大流程。 */
+:root{--ink:#17231f;--ink-soft:#52635c;--paper:#f4f1e9;--surface:#fffef9;--card:#ffffff;--mint:#0d8b72;--accent:#086957;--lime:#c9ef5b;--line:rgba(23,35,31,.15);--tint:#e8f2ee;--tint-2:#d5eee4;--strong-bg:#17231f;--on-strong:#ffffff;--btn-bg:#17231f;--btn-fg:#ffffff;--cta-bg:#086957;--plot-bg:#f9f8f3;--canvas:#fdfdfb;--shadow:0 20px 70px rgba(26,50,42,.12);--hdr:rgba(244,241,233,.92);--err-bg:#fff0ec;--err-fg:#a13d28;--gx:max(16px,5vw);--font:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e7efe9;--ink-soft:#a5b6ae;--paper:#0f1915;--surface:#14211c;--card:#1a2a24;--mint:#3fc0a4;--accent:#79dcc4;--lime:#c9ef5b;--line:rgba(231,239,233,.16);--tint:#1f3a31;--tint-2:#285045;--strong-bg:#0a120f;--on-strong:#f1f6f2;--btn-bg:#3fc0a4;--btn-fg:#07201a;--cta-bg:#0c5546;--plot-bg:#111d18;--canvas:#101b17;--shadow:0 20px 70px rgba(0,0,0,.4);--hdr:rgba(15,25,21,.92);--err-bg:#3a1f19;--err-fg:#ffb4a3;color-scheme:dark}}
+:root[data-theme="dark"]{--ink:#e7efe9;--ink-soft:#a5b6ae;--paper:#0f1915;--surface:#14211c;--card:#1a2a24;--mint:#3fc0a4;--accent:#79dcc4;--lime:#c9ef5b;--line:rgba(231,239,233,.16);--tint:#1f3a31;--tint-2:#285045;--strong-bg:#0a120f;--on-strong:#f1f6f2;--btn-bg:#3fc0a4;--btn-fg:#07201a;--cta-bg:#0c5546;--plot-bg:#111d18;--canvas:#101b17;--shadow:0 20px 70px rgba(0,0,0,.4);--hdr:rgba(15,25,21,.92);--err-bg:#3a1f19;--err-fg:#ffb4a3;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.6;font-size:14px;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--hdr)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
+h1,h2,h3,h4{text-wrap:balance}
+.px{padding-left:max(var(--gx),env(safe-area-inset-left,0px));padding-right:max(var(--gx),env(safe-area-inset-right,0px))}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;display:flex;align-items:center;justify-content:space-between;gap:20px;height:68px;background:var(--hdr);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;line-height:1.1;white-space:nowrap}
+.brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px 12px 4px 12px;background:var(--strong-bg);color:var(--lime);font-size:13px;letter-spacing:.08em}
+.brand small{display:block;margin-top:3px;color:var(--ink-soft);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+nav.main{display:flex;gap:24px;font-size:14px;color:var(--ink-soft)}
+nav.main a:hover{color:var(--ink)}
+.btn{border:0;border-radius:999px;padding:11px 19px;font-weight:700;font-size:14px;transition:transform .18s,background .18s}
+.btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:.55;cursor:wait;transform:none}
+.btn-primary{background:var(--btn-bg);color:var(--btn-fg)}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn-soft{background:var(--tint);color:var(--accent)}
+.btn-lime{background:var(--lime);color:#17231f;padding:14px 24px}
+.eyebrow{color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);column-gap:clamp(28px,6vw,100px);row-gap:32px;align-items:center;padding-top:72px;padding-bottom:64px;background:radial-gradient(circle at 78% 18%,rgba(201,239,91,.2),transparent 26%),radial-gradient(circle at 6% 90%,rgba(77,103,216,.1),transparent 24%),var(--paper)}
+.hero-copy{min-width:0;max-width:820px}
+.kicker{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.kicker i{width:26px;height:2px;background:var(--mint)}
+.hero h1{margin:0;font-size:clamp(36px,5.4vw,76px);line-height:1.1;letter-spacing:-.05em;font-weight:800}
+.hero h1 em{color:var(--accent);font-style:normal}
+.hero-copy>p{max-width:640px;margin:24px 0 0;color:var(--ink-soft);font-size:17px;line-height:1.85}
+.hero-actions{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+.metrics{display:flex;flex-wrap:wrap;gap:18px 0;margin-top:48px;border-top:1px solid var(--line);padding-top:20px}
+.metrics>*{min-width:130px;padding-right:26px;margin-right:26px;border-right:1px solid var(--line)}
+.metrics>*:last-child{border-right:0}
+.metrics strong{display:block;font-size:34px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.metrics span{color:var(--ink-soft);font-size:12px}
+.metric-btn{background:transparent;border:0;text-align:left;padding-top:0;padding-bottom:0;padding-left:0}
+.metric-btn small{display:block;margin-top:6px;color:var(--accent);font-size:11px;font-weight:800}
+.hero-card{min-width:0;padding:22px;border-radius:26px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.hero-card-head{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 16px;border-bottom:1px solid var(--line);font-weight:800}
+.hero-card-head small{padding:4px 9px;background:var(--tint);border-radius:99px;color:var(--accent);font-weight:700}
+.region-row{display:grid;grid-template-columns:10px 48px 1fr 28px;gap:13px;align-items:center;min-height:60px;border-bottom:1px solid var(--line)}
+.region-row i{width:9px;height:9px;border-radius:50%}
+.region-row span{color:var(--ink-soft);font-size:13px}
+.region-row b{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--tint);font-size:12px}
+.hero-note{margin-top:18px;padding:16px;border-radius:16px;background:var(--strong-bg);color:var(--on-strong)}
+.hero-note span{color:var(--lime);font-size:11px;font-weight:800;letter-spacing:.1em}
+.hero-note p{margin:6px 0 0;font-size:13px}
+.level-guide{grid-column:1/-1;display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,2fr);gap:26px;padding:24px;border-radius:24px;background:var(--strong-bg);color:var(--on-strong)}
+.level-guide .eyebrow{color:var(--lime)}
+.level-guide h3{margin:8px 0 10px;font-size:24px;line-height:1.3}
+.level-guide p{margin:0;color:rgba(255,255,255,.66);font-size:14px;line-height:1.75}
+.level-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.level-cards article{display:flex;flex-direction:column;min-height:180px;padding:18px;border:1px solid rgba(255,255,255,.14);border-radius:18px;background:rgba(255,255,255,.07)}
+.level-cards article>span{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--lime);color:#17231f;font-size:13px;font-weight:800}
+.level-cards h4{margin:14px 0 6px;font-size:18px}
+.level-cards p{color:#fff;font-size:14px;line-height:1.55}
+.level-cards small{display:block;margin-top:auto;padding-top:16px;color:rgba(255,255,255,.6);font-size:12px}
+.insight{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;padding-top:18px;padding-bottom:18px;background:var(--strong-bg);color:var(--on-strong)}
+.insight>span{padding:4px 9px;border:1px solid rgba(255,255,255,.3);border-radius:99px;color:var(--lime);font-size:11px;font-weight:800}
+.insight p{margin:0;font-size:14px;color:rgba(255,255,255,.78)}
+.insight b{color:#fff}
+.insight a{font-size:13px;font-weight:800}
+.section{padding-top:96px;padding-bottom:96px}
+.section.alt{background:var(--surface)}
+.section.tint{background:var(--tint)}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:36px;margin-bottom:36px}
+.sec-head>div{min-width:0}
+.sec-head h2{margin:10px 0 0;font-size:clamp(28px,3.8vw,50px);letter-spacing:-.04em;line-height:1.15}
+.sec-head p{margin:14px 0 0;color:var(--ink-soft);line-height:1.7;max-width:720px}
+.axis-ctl{display:flex;flex-wrap:wrap;gap:10px;padding:9px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+.axis-ctl label{display:flex;align-items:center;gap:8px;color:var(--ink-soft);font-size:12px}
+select.sel{appearance:none;min-width:140px;border:1px solid var(--line);border-radius:10px;background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='m2 4 4 4 4-4' fill='none' stroke='%2398a8a0' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center;padding:9px 30px 9px 10px;font-size:12px;font-weight:700;color:var(--ink)}
+.legend{display:flex;align-items:center;flex-wrap:wrap;gap:8px 20px;margin-bottom:16px;color:var(--ink-soft);font-size:12px}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:10px;height:10px;border-radius:50%}
+.legend small{margin-left:auto}
+.plot-shell{position:relative;height:600px;padding:20px 22px 58px 72px;border:1px solid var(--line);border-radius:26px;background:var(--plot-bg);overflow:hidden}
+.plot-area{position:relative;width:100%;height:100%;border-left:1px solid var(--line);border-bottom:1px solid var(--line);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:25% 25%;background-blend-mode:normal}
+.quad{position:absolute;z-index:1;color:var(--ink-soft);opacity:.55;font-size:12px;font-weight:800;letter-spacing:.08em}
+.q-tl{top:40px;left:100px}.q-tr{top:40px;right:42px}.q-bl{bottom:78px;left:100px}.q-br{bottom:78px;right:42px}
+.axis{position:absolute;display:flex;justify-content:space-between;color:var(--ink-soft);font-size:12px}
+.axis strong{color:var(--ink);font-size:12px;letter-spacing:.1em}
+.x-axis{left:72px;right:22px;bottom:18px;align-items:center}
+.y-axis{left:18px;top:20px;bottom:58px;flex-direction:column-reverse;align-items:center}
+.y-axis strong{writing-mode:vertical-rl;text-orientation:upright}
+.bubble{position:absolute;z-index:3;display:grid;place-items:center;transform:translate(-50%,50%);border:3px solid rgba(255,255,255,.9);border-radius:50%;box-shadow:0 8px 22px rgba(0,0,0,.22);color:#fff;transition:transform .18s}
+.bubble span{max-width:82%;font-size:13px;font-weight:800;line-height:1.15;text-align:center;overflow-wrap:anywhere}
+.bubble:hover,.bubble:focus-visible{z-index:10;transform:translate(-50%,50%) scale(1.18)}
+.dim-notes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-top:0;border-radius:0 0 20px 20px;overflow:hidden}
+.dim-notes div{padding:16px;border-right:1px solid var(--line)}
+.dim-notes div:last-child{border-right:0}
+.dim-notes div.on{background:var(--tint)}
+.dim-notes span{font-size:15px;font-weight:800;color:var(--accent)}
+.dim-notes p{margin:6px 0 0;color:var(--ink-soft);font-size:13px;line-height:1.6}
+.dim-notes small{display:block;margin-top:8px;color:var(--ink-soft);font-size:12px;opacity:.85}
+.filter-bar{display:grid;grid-template-columns:minmax(220px,1fr) auto auto auto;gap:10px;align-items:center;margin-bottom:18px}
+.search{display:flex;align-items:center;gap:10px;padding:0 15px;height:46px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:13px}
+.chips{display:flex;gap:5px;padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--card);overflow-x:auto;max-width:100%}
+.chips button{border:0;border-radius:10px;padding:8px 12px;background:transparent;color:var(--ink-soft);font-size:12px;white-space:nowrap}
+.chips button.on{background:var(--btn-bg);color:var(--btn-fg)}
+.filter-bar select.sel{height:46px;background-color:var(--card)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:20px;background:var(--card)}
+.tbl{width:100%;min-width:1100px;border-collapse:collapse;table-layout:fixed}
+.tbl th{padding:14px 18px;background:var(--strong-bg);color:rgba(255,255,255,.72);font-size:11px;text-align:left;letter-spacing:.08em}
+.tbl td{position:relative;padding:18px;border-bottom:1px solid var(--line);color:var(--ink-soft);font-size:12px;line-height:1.65;vertical-align:middle}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover{background:var(--tint)}
+.tbl tbody tr:last-child td{border-bottom:0}
+.cell{display:flex;gap:12px;align-items:flex-start}
+.cell i{flex:0 0 auto;width:9px;height:9px;margin-top:6px;border-radius:50%}
+.cell strong{display:block;color:var(--ink);font-size:13px;line-height:1.45}
+.cell small{display:block;margin-top:4px;color:var(--ink-soft);font-size:11px}
+.stage-tags{display:flex;flex-wrap:wrap;gap:5px}
+.stage-tags span{padding:4px 7px;border-radius:7px;background:var(--tint);color:var(--accent);font-size:11px;font-weight:700}
+.tbl td:last-child{padding-right:42px}
+.tbl td:last-child b{position:absolute;top:50%;right:16px;transform:translateY(-50%);color:var(--mint);font-size:17px;font-weight:500}
+.empty{padding:44px;color:var(--ink-soft);text-align:center}
+.kg-shell{border:1px solid var(--line);border-radius:26px;background:var(--canvas);overflow:hidden}
+.kg-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--card)}
+.kg-count{margin-right:auto;color:var(--ink-soft);font-size:12px}
+.kg-bar input[type=search]{min-width:200px;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:11px;background:var(--paper);outline:0}
+.kg-bar button{height:38px;min-width:38px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:12px;font-weight:700}
+.kg-bar button:hover{border-color:var(--mint)}
+.kg-zoom{display:flex;align-items:center;gap:6px}
+.kg-zoom span{min-width:48px;text-align:center;color:var(--ink-soft);font-size:12px}
+.kg-grid{display:grid;grid-template-columns:205px minmax(0,1fr) 280px;min-height:700px}
+.kg-legend{padding:18px 10px;border-right:1px solid var(--line);background:var(--card);overflow-y:auto;max-height:700px}
+.kg-legend>strong{display:block;padding:0 10px 10px;color:var(--ink-soft);font-size:12px}
+.kg-legend button{display:flex;align-items:center;gap:8px;width:100%;min-height:32px;padding:6px 9px;border:0;border-radius:9px;background:transparent;font-size:12px;text-align:left}
+.kg-legend button:hover,.kg-legend button.on{background:var(--tint)}
+.kg-legend button i{flex:0 0 auto;width:10px;height:10px;border-radius:50%}
+.kg-legend button span{margin-left:auto;color:var(--ink-soft)}
+.kg-items{max-height:210px;margin:2px 0 7px 17px;padding-left:9px;border-left:1px solid var(--line);overflow-y:auto}
+.kg-items button{display:block;min-height:27px;font-size:11px;line-height:1.35}
+.kg-legend .kg-clear{justify-content:center;margin-top:14px;border:1px solid var(--line);color:var(--accent);font-weight:700}
+.kg-canvas{position:relative;min-width:0;min-height:700px;overflow:hidden;cursor:grab;touch-action:pan-y;background:radial-gradient(circle at center,rgba(13,139,114,.1),transparent 26%),var(--canvas)}
+.kg-canvas.dragging{cursor:grabbing;user-select:none}
+.kg-world{position:absolute;left:50%;top:50%;width:1120px;height:760px;margin:-380px 0 0 -560px;transform-origin:center}
+.kg-world svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.kg-world line{stroke:#8a9b8c;stroke-width:.9;opacity:.28}
+.kg-world line.active{stroke:var(--mint);stroke-width:2.4;opacity:.95}
+.kg-world line.dim{opacity:.04}
+.kn{position:absolute;z-index:2;display:flex;align-items:center;gap:5px;width:112px;min-height:28px;padding:0;border:0;background:transparent;color:#617051;text-align:left;transform:translate(-50%,-50%);transition:opacity .2s}
+.kn i{flex:0 0 auto;width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px var(--canvas)}
+.kn span{max-width:100px;color:var(--ink);font-size:10px;line-height:1.25;text-shadow:0 0 3px var(--canvas),0 0 3px var(--canvas),0 0 6px var(--canvas)}
+.kn.course{color:var(--ink);font-weight:800}
+.kn.course i{width:15px;height:15px}
+.kn.stage{color:#87934a;font-weight:800}
+.kn.stage i{width:19px;height:19px}
+.kn.stage span{font-size:11px}
+.kn:hover,.kn.active{z-index:60}
+.kn.active i{box-shadow:0 0 0 6px rgba(151,180,106,.3)}
+.kn.dim{opacity:.1}
+.kg-detail{padding:24px 20px;border-left:1px solid var(--line);background:var(--card);overflow-y:auto;max-height:700px}
+.kd-head{display:flex;align-items:center;gap:8px;color:var(--accent);font-size:12px;font-weight:800}
+.kd-head i{width:10px;height:10px;border-radius:50%}
+.kg-detail h3{margin:12px 0 8px;font-size:22px;line-height:1.3}
+.kg-detail>p{margin:0;color:var(--ink-soft);font-size:14px;line-height:1.75}
+.kd-block{margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+.kd-block>small{display:block;margin-bottom:10px;color:var(--ink-soft);font-size:12px;font-weight:800}
+.kd-block>div{display:flex;flex-wrap:wrap;gap:7px}
+.kd-block span,.kd-block button{padding:7px 9px;border:0;border-radius:8px;background:var(--tint);color:var(--accent);font-size:12px;font-weight:700;text-align:left}
+.kd-block button:hover{background:var(--tint-2)}
+.kd-empty{display:grid;gap:10px;color:var(--ink-soft)}
+.kd-empty strong{color:var(--ink);font-size:20px}
+.kd-empty p{margin:0 0 6px;line-height:1.7}
+.kd-empty span{padding:8px 10px;border-radius:9px;background:var(--tint);font-size:12px}
+.kd-cta{width:100%;margin-top:20px;padding:12px;border:0;border-radius:11px;background:var(--btn-bg);color:var(--btn-fg);font-weight:800}
+.p-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:24px;background:var(--card)}
+.p-graph{display:grid;grid-template-columns:minmax(220px,260px) minmax(140px,1fr) minmax(300px,400px);min-width:760px;padding:18px 22px}
+.p-nodes,.c-nodes{display:flex;flex-direction:column}
+.p-node{flex:1 1 0;margin:7px 0;padding:14px 18px;border:1px solid var(--line);border-radius:16px;background:var(--card);text-align:left;transition:background .2s,opacity .2s,border-color .2s}
+.p-node strong,.p-node small{display:block}
+.p-node strong{font-size:16px;line-height:1.4}
+.p-node small{margin-top:6px;color:var(--ink-soft);font-size:13px}
+.p-node.on{border-color:var(--mint);background:var(--tint-2)}
+.p-node.linked{border-color:var(--mint);background:var(--tint)}
+.p-node.muted,.c-node.muted{opacity:.38}
+.p-edges{width:100%;height:100%;overflow:visible;pointer-events:none}
+.p-edges path{fill:none;stroke-linecap:round;stroke-width:3;vector-effect:non-scaling-stroke;transition:opacity .2s}
+.p-edges path.active{stroke:var(--mint);opacity:.8}
+.p-edges path.muted{stroke:#9db5a9;opacity:.2}
+.c-node{position:relative;display:flex;align-items:center;flex:1 1 0;margin:4px 0;border:1px solid var(--line);border-radius:13px;background:var(--card);transition:opacity .2s,border-color .2s}
+.c-node.linked{border-color:var(--mint);background:var(--tint)}
+.c-node>button:first-child{display:flex;align-items:center;gap:12px;flex:1;min-width:0;height:100%;padding:7px 46px 7px 13px;border:0;background:transparent;text-align:left}
+.c-node i{flex:0 0 auto;width:9px;height:9px;border-radius:50%}
+.c-node strong,.c-node small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-node strong{font-size:13px}
+.c-node small{margin-top:2px;color:var(--ink-soft);font-size:12px}
+.c-node .go{position:absolute;top:50%;right:8px;transform:translateY(-50%);width:32px;height:32px;border:0;border-radius:8px;background:var(--tint-2);color:var(--accent);font-size:18px}
+.p-summary{margin-top:16px;padding:22px 26px;border:1px solid var(--line);border-radius:18px;background:var(--card)}
+.p-summary>span{color:var(--accent);font-size:13px;font-weight:800}
+.p-summary h3{margin:5px 0 8px;font-size:22px}
+.p-summary p{margin:0;color:var(--ink-soft);line-height:1.7}
+.p-summary small{display:block;margin-top:8px;color:var(--accent);font-size:14px;line-height:1.6}
+.loop{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:0 0 28px;padding:16px 18px;border:1px solid var(--line);border-radius:18px;background:var(--paper)}
+.loop span{padding:7px 10px;border-radius:9px;background:var(--card);border:1px solid var(--line);font-size:14px;font-weight:700}
+.loop i{color:var(--mint);font-style:normal;font-weight:800}
+.loop b{width:100%;margin-top:4px;color:var(--accent);font-size:14px;font-weight:700}
+.path-layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px}
+.path-tabs{display:flex;flex-direction:column;gap:8px}
+.path-tabs button{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:center;width:100%;padding:14px;border:1px solid var(--line);border-radius:16px;background:transparent;text-align:left}
+.path-tabs button>span{color:var(--ink-soft);font-size:11px;font-weight:800}
+.path-tabs strong,.path-tabs small{display:block}
+.path-tabs strong{font-size:14px}
+.path-tabs small{margin-top:2px;color:var(--ink-soft);font-size:12px}
+.path-tabs button.on{background:var(--strong-bg);color:var(--on-strong)}
+.path-tabs button.on>span{color:var(--lime)}
+.path-tabs button.on small{color:rgba(255,255,255,.62)}
+.path-content{min-width:0;padding:26px;border:1px solid var(--line);border-radius:24px;background:var(--paper)}
+.path-title{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.path-title>div{display:flex;gap:16px}
+.path-title>div>span{display:grid;place-items:center;flex:0 0 auto;width:42px;height:42px;border-radius:13px;background:var(--lime);color:#17231f;font-size:12px;font-weight:800}
+.path-title h3{margin:0;font-size:24px}
+.path-title p{margin:6px 0 0;color:var(--ink-soft);font-size:13px}
+.path-title>small{color:var(--ink-soft);font-size:12px;white-space:nowrap}
+.stage-action{display:flex;gap:16px;align-items:center;margin-top:18px;padding:13px 15px;border-radius:12px;background:var(--tint)}
+.stage-action span{flex:0 0 auto;color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.08em}
+.stage-action p{margin:0;color:var(--ink-soft);font-size:13px;line-height:1.55}
+.timeline{position:relative;padding-top:16px}
+.timeline::before{content:"";position:absolute;top:36px;bottom:36px;left:23px;width:1px;background:rgba(13,139,114,.4)}
+.step{position:relative;display:grid;grid-template-columns:46px 1fr auto;gap:14px;width:100%;padding:16px 12px;border:0;border-radius:16px;background:transparent;text-align:left}
+.step:hover{background:var(--card)}
+.step-i{position:relative;z-index:1;display:grid;place-items:center;width:28px;height:28px;margin-left:9px;border:1px solid rgba(13,139,114,.5);border-radius:50%;background:var(--paper);color:var(--accent);font-size:12px;font-weight:800}
+.step:hover .step-i{background:var(--mint);color:#fff}
+.step small{display:block;color:var(--accent);font-size:12px;font-weight:800}
+.step strong{display:block;margin-top:4px;font-size:15px}
+.step p{margin:6px 0 0;color:var(--ink-soft);font-size:12px}
+.step>b{color:var(--mint);font-weight:500}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.tags span{padding:6px 9px;border-radius:8px;background:var(--tint);color:var(--accent);font-size:12px;font-weight:700}
+.tags.dark span{background:var(--strong-bg);color:var(--on-strong)}
+.tags.compact{margin-top:8px}
+.tags.compact span{padding:3px 7px;font-size:11px}
+.cta-band{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:30px;margin:0 max(12px,env(safe-area-inset-left,0px)) 30px;padding:60px max(4vw,24px);border-radius:30px;background:var(--cta-bg);color:#fff}
+.cta-band h2{margin:10px 0;font-size:clamp(28px,3.8vw,48px);letter-spacing:-.04em}
+.cta-band p{margin:0;color:rgba(255,255,255,.75);line-height:1.7}
+.cta-band .eyebrow{color:var(--lime)}
+.sync{margin-top:12px;font-size:12px;color:rgba(255,255,255,.75)}
+footer.ft{display:flex;align-items:center;flex-wrap:wrap;gap:12px 30px;padding-top:28px;padding-bottom:36px;color:var(--ink-soft);font-size:12px}
+footer.ft span{color:var(--ink);font-weight:800}
+footer.ft p{flex:1;margin:0}
+.backdrop{position:fixed;inset:0;z-index:80;display:flex;justify-content:flex-end;background:rgba(9,21,17,.55);backdrop-filter:blur(6px);animation:fade .18s}
+.backdrop.center{justify-content:center;align-items:center;padding:16px}
+.panel{position:relative;width:min(520px,100%);height:100%;padding:54px 40px;background:var(--surface);overflow-y:auto;animation:slide .26s;box-shadow:-20px 0 70px rgba(0,0,0,.2)}
+.panel.wide{width:min(680px,100%)}
+.panel.form{width:min(860px,100%);height:auto;max-height:94%;padding:34px;border-radius:26px;animation:rise .24s}
+.x{position:absolute;top:18px;right:20px;display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--line);border-radius:50%;background:transparent;font-size:22px}
+.panel h2{margin:16px 0;font-size:32px;line-height:1.25;letter-spacing:-.03em}
+.kick{display:flex;align-items:center;gap:8px;color:var(--ink-soft);font-size:12px;font-weight:700}
+.kick i{width:9px;height:9px;border-radius:50%}
+.promise{color:var(--accent);font-size:17px;font-weight:700;line-height:1.7}
+.blk{margin-top:26px;padding-top:20px;border-top:1px solid var(--line)}
+.blk small{color:var(--ink-soft);font-size:12px;font-weight:800;letter-spacing:.1em}
+.blk p{margin:8px 0 0;line-height:1.7}
+.scores{margin-top:28px;padding:18px;border-radius:18px;background:var(--paper)}
+.score-row{display:grid;grid-template-columns:96px 1fr 30px;gap:12px;align-items:center;margin-bottom:12px;font-size:12px}
+.score-row:last-child{margin-bottom:0}
+.score-row b{font-variant-numeric:tabular-nums}
+.track{height:5px;border-radius:9px;background:var(--line);overflow:hidden}
+.track i{display:block;height:100%;background:var(--mint)}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.meta span{padding:7px 10px;border:1px solid var(--line);border-radius:9px;color:var(--ink-soft);font-size:12px}
+.coll{display:grid;gap:10px}
+.coll button{display:grid;grid-template-columns:10px 1fr auto;gap:14px;align-items:center;width:100%;padding:15px;border:1px solid var(--line);border-radius:15px;background:var(--card);text-align:left}
+.coll button:hover{border-color:var(--mint)}
+.coll i{width:9px;height:9px;border-radius:50%}
+.coll small{display:block;color:var(--accent);font-size:12px;font-weight:700}
+.coll strong{display:block;margin-top:4px;font-size:15px;line-height:1.4}
+.coll em{display:block;margin-top:4px;color:var(--ink-soft);font-size:12px;font-style:normal;line-height:1.5}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.fgrid .wide{grid-column:1/-1}
+.fgrid label,.fgrid .fld{display:flex;flex-direction:column;gap:6px;color:var(--ink-soft);font-size:13px;font-weight:700}
+.fgrid input[type=text],.fgrid input[type=number],.fgrid select,.fgrid textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-weight:400}
+.checks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.checks label{flex-direction:row;align-items:center;gap:7px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-weight:500}
+.sliders{padding:16px;border-radius:15px;background:var(--paper)}
+.sliders label{display:grid;grid-template-columns:130px 1fr 34px;gap:12px;align-items:center;margin-top:10px;flex-direction:row}
+.sliders input{accent-color:var(--mint)}
+.form-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;padding-top:6px}
+.msg{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:var(--tint);color:var(--accent);font-size:12px}
+.msg.err{background:var(--err-bg);color:var(--err-fg)}
+.drop{position:relative;display:flex!important;flex-direction:column;align-items:center;gap:4px;padding:20px 16px;margin:0 0 18px;border:1.5px dashed var(--mint);border-radius:15px;background:var(--tint);color:var(--ink)!important;text-align:center;cursor:pointer}
+.drop.over,.drop:focus-within{background:var(--tint-2)}
+.drop input{position:absolute;width:1px;height:1px;opacity:0}
+.drop b{font-size:15px}.drop small{color:var(--ink-soft);font-weight:400;font-size:12px}
+.drop.busy{opacity:.7;cursor:progress}
+@keyframes fade{from{opacity:0}}
+@keyframes slide{from{transform:translateX(40px);opacity:0}}
+@keyframes rise{from{transform:translateY(20px);opacity:0}}
+@media (max-width:980px){
+nav.main{display:none}
+.hero{grid-template-columns:minmax(0,1fr)}
+.sec-head{align-items:flex-start;flex-direction:column}
+.dim-notes{grid-template-columns:repeat(2,minmax(0,1fr))}
+.dim-notes div{border-bottom:1px solid var(--line)}
+.filter-bar{grid-template-columns:minmax(0,1fr)}
+.kg-grid{grid-template-columns:190px minmax(0,1fr)}
+.kg-detail{grid-column:1/-1;border-left:0;border-top:1px solid var(--line);max-height:none}
+.level-guide{grid-template-columns:minmax(0,1fr)}
+.path-layout{grid-template-columns:minmax(0,1fr)}
+.path-tabs{display:grid;grid-template-columns:repeat(6,minmax(150px,1fr));overflow-x:auto;padding-bottom:8px}
+.insight{grid-template-columns:minmax(0,1fr);gap:8px}
+.insight>span{width:max-content}
+}
+@media (max-width:680px){
+header.top{height:62px}
+.brand small{display:none}
+.hero{padding-top:48px;padding-bottom:44px}
+.metrics>*{min-width:0;padding-right:14px;margin-right:14px}
+.metrics strong{font-size:27px}
+.section{padding-top:64px;padding-bottom:64px}
+.plot-shell{height:480px;padding-left:56px}
+.x-axis{left:56px}
+.q-tl,.q-bl{left:66px}
+.dim-notes{grid-template-columns:minmax(0,1fr)}
+.legend small{width:100%;margin:0}
+.kg-grid{display:block;min-height:0}
+.kg-legend{max-height:240px;border-right:0;border-bottom:1px solid var(--line)}
+.kg-canvas{min-height:560px}
+.kg-bar input[type=search]{min-width:0;flex:1 1 100%}
+.level-cards{grid-template-columns:minmax(0,1fr)}
+.level-cards article{min-height:0}
+.path-content{padding:16px}
+.path-title{flex-direction:column}
+.panel{padding:50px 22px}
+.panel.form{padding:26px 18px}
+.fgrid{grid-template-columns:minmax(0,1fr)}
+.checks{grid-template-columns:repeat(2,minmax(0,1fr))}
+.sliders label{grid-template-columns:minmax(0,1fr) 34px}
+.sliders label span{grid-column:1/-1}
+.cta-band{padding:44px 22px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+
+<header class="top px"><a class="brand" href="#top"><span class="brand-mark">AI</span><span>AI MAP學苑<small>Course Positioning Atlas</small></span></a>
+<nav class="main" aria-label="主要導覽"><a href="#distribution">定位分布</a><a href="#matrix">課程矩陣</a><a href="#knowledge">知識圖譜</a><a href="#personas">同仁與課程</a><a href="#paths">學習路徑</a></nav>
+<button class="btn btn-primary" id="addTop" hidden>＋ 新增課程</button></header>
+
+<main id="top">
+<section class="hero px">
+<div class="hero-copy"><div class="kicker eyebrow"><i></i>以業務問題為入口</div>
+<h1>不只看學什麼工具，<br><em>更看推進哪一步銷售。</em></h1>
+<p>以 AG 銷售六大流程為主架構，把培訓科的 AI 課程放進同一張可互動地圖，清楚辨識覆蓋、重疊與課程缺口。</p>
+<div class="hero-actions"><a class="btn btn-primary" href="#distribution">查看定位分布</a><a class="btn btn-ghost" href="#paths">看六大流程缺口</a></div>
+<div class="metrics" id="metrics"></div></div>
+<div class="hero-card" id="radar"></div>
+<div class="level-guide"><div><span class="eyebrow">三級學習路徑</span><h3>從安心使用，到融入業務工作流</h3><p>課程依 AI 素養與實務應用深度分成三個層級，協助同仁循序建立安全判斷、業務應用與工作流程整合能力。</p></div>
+<div class="level-cards"><article><span>L1</span><h4>AI安心用</h4><p>安全、查證、基本指令</p><small>建立正確且負責任的 AI 使用習慣</small></article><article><span>L2</span><h4>AI用在業務上</h4><p>開發、約訪、需求分析、異議處理、客戶服務</p><small>把 AI 帶進真實的銷售與服務情境</small></article><article><span>L3</span><h4>AI融入工作流</h4><p>跨工具整合、個人 SOP、成果改善</p><small>形成可持續使用與優化的工作方法</small></article></div></div>
+</section>
+
+<section class="insight px"><span>目前觀察</span><p>現有課程集中在<b>準客戶開發、約訪客戶與客戶服務</b>；需求分析、建議書設計及促成階段仍有擴充空間。</p><a href="#matrix">查看完整矩陣 →</a></section>
+
+<section class="section alt px" id="distribution"><div class="sec-head"><div><div class="eyebrow">定位分布圖</div><h2>切換構面，看見課程重疊與缺口</h2><p>圓點大小代表課程時數，顏色代表區域；點選圓點可查看完整定位。</p></div>
+<div class="axis-ctl"><label>銷售流程<select class="sel" id="selStage"></select></label><label>橫軸<select class="sel" id="selX"></select></label><label>縱軸<select class="sel" id="selY"></select></label></div></div>
+<div class="legend" id="regionLegend"></div><div id="scatter"></div><div class="dim-notes" id="dimNotes"></div></section>
+
+<section class="section px" id="matrix"><div class="sec-head"><div><div class="eyebrow">課程定位矩陣</div><h2>用同一套語言比較每門課</h2><p>工具只是標籤；主要定位由業務問題、獨特承諾與行為成果共同決定。</p></div></div>
+<div class="filter-bar"><label class="search"><span aria-hidden="true">⌕</span><input id="q" type="search" aria-label="搜尋課程" placeholder="搜尋課程、問題或工具"></label><div class="chips" id="regionChips"></div><select class="sel" id="selStage2" aria-label="篩選銷售流程"></select><select class="sel" id="selTrack" aria-label="篩選內容類型"></select></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th style="width:24%">課程與區域</th><th style="width:20%">銷售流程定位</th><th style="width:21%">解決的業務問題</th><th style="width:14%">獨特定位</th><th style="width:21%">期待行為</th></tr></thead><tbody id="tbody"></tbody></table><div class="empty" id="tblEmpty" hidden>沒有符合條件的課程，請調整篩選。</div></div></section>
+
+<section class="section alt px" id="knowledge"><div class="sec-head"><div><div class="eyebrow">課程知識圖譜</div><h2>從銷售流程，找到知識與課程</h2><p>左側依分類探索，點選流程、知識點或課程，右側檢視直接關聯與內容。拖曳可旋轉，頁面照常捲動。</p></div></div>
+<div class="kg-shell"><div class="kg-bar"><span class="kg-count" id="kgCount"></span><label><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden">搜尋節點</span><input type="search" id="kgQ" placeholder="搜尋課程或知識點"></label><button id="kgRe">↻ 重新排列</button><div class="kg-zoom"><button id="kgOut" aria-label="縮小">−</button><span id="kgZ">100%</span><button id="kgIn" aria-label="放大">＋</button><button id="kgReset">重設</button></div></div>
+<div class="kg-grid"><aside class="kg-legend" id="kgLegend"></aside><div class="kg-canvas" id="kgCanvas" aria-label="課程與知識點關聯圖，拖曳可旋轉"><div class="kg-world" id="kgWorld"></div></div><aside class="kg-detail" id="kgDetail"></aside></div></div></section>
+
+<section class="section tint px" id="personas"><div class="sec-head"><div><div class="eyebrow">同仁需求關聯圖</div><h2>哪一種工作需求，適合哪一門課？</h2><p>按同仁類型或課程，即可看見多對多的推薦連結；分類依目前的工作需求，不代表固定的人員標籤。新增課程也會依定位自動加入。</p></div></div>
+<div class="p-wrap"><div class="p-graph" id="pGraph"></div></div><div class="p-summary" id="pSummary" aria-live="polite"></div></section>
+
+<section class="section alt px" id="paths"><div class="sec-head"><div><div class="eyebrow">AG 銷售六大流程</div><h2>看見每一步的課程支援與能力缺口</h2><p>新增課程後，會依銷售流程與分級自動加入相對應的位置。</p></div></div>
+<div class="loop"><span>準客戶開發</span><i>→</i><span>約訪客戶</span><i>→</i><span>需求分析</span><i>→</i><span>建議書設計</span><i>→</i><span>說明與促成</span><i>→</i><span>客戶服務</span><b>滿意與信任帶來轉介紹，回到新一輪準客戶開發 ↺</b></div>
+<div class="path-layout"><div class="path-tabs" id="pathTabs"></div><div class="path-content" id="pathContent"></div></div></section>
+
+<section class="cta-band"><div><span class="eyebrow">持續生長的課程地圖</span><h2 id="ctaTitle">課程清單由管理者維護。</h2><p id="ctaText">新增或修改課程後，分布圖、矩陣、知識圖譜、同仁關聯圖與學習路徑會同步更新。</p><div class="sync" id="syncNote" role="status">資料連線中…</div></div><button class="btn btn-lime" id="addBottom" hidden>新增下一門課程 →</button></section>
+</main>
+<footer class="ft px"><span>AI MAP學苑</span><p>用共同構面保留區域特色，讓每門課都有清楚的位置。</p><a href="#top">回到頂端 ↑</a></footer>
+<div id="overlay"></div>
+
+<script>
+const D={"seed":[{"id":"central-chatgpt-foundation","title":"ChatGPT 高效對話與知識探索","region":"中區","level":"L1 基礎","track":"AI 基礎","salesStages":["準客戶開發","客戶服務"],"problem":"不知道怎麼問 AI，生成結果品質不穩定","promise":"建立生成式 AI 基礎、風險意識與結構化提示詞能力","outcome":"用結構化提示詞完成一項真實業務任務","tools":["ChatGPT"],"duration":180,"audience":"一般業務／業務主管","scores":{"aiDepth":2.6,"businessIntensity":2.2,"behaviorTransfer":3.2,"contentProduction":2.5,"knowledgeProductivity":3.2}},{"id":"central-dm","title":"AI 助攻！DM 輕鬆做","region":"中區","level":"L2 應用","track":"內容行銷","salesStages":["準客戶開發","約訪客戶","客戶服務"],"problem":"活動宣傳文案與 DM 製作耗時","promise":"把活動概念快速轉成可直接使用的宣傳 DM","outcome":"完成並實際使用一張活動 DM","tools":["ChatGPT","Canva"],"duration":210,"audience":"一般業務／業務主管","scores":{"aiDepth":3.1,"businessIntensity":3.5,"behaviorTransfer":4.1,"contentProduction":4.8,"knowledgeProductivity":2.1}},{"id":"central-meme","title":"AI 在手・梗圖我有","region":"中區","level":"L2 應用","track":"內容行銷","salesStages":["準客戶開發","客戶服務"],"problem":"客戶社群互動缺少內容與記憶點","promise":"以低門檻梗圖與賀卡維繫客戶關係","outcome":"製作並發送一張客戶互動梗圖或賀卡","tools":["ChatGPT","Canva","Raphael AI"],"duration":180,"audience":"一般業務／業務主管","scores":{"aiDepth":3.3,"businessIntensity":3.7,"behaviorTransfer":4.2,"contentProduction":4.9,"knowledgeProductivity":1.8}},{"id":"central-video","title":"AI 驅動！創意短影音","region":"中區","level":"L3 整合","track":"內容行銷","salesStages":["準客戶開發","客戶服務"],"problem":"個人品牌素材不足，不會整合短影音製作流程","promise":"串接圖像、動態與後製工具建立個人品牌短影音","outcome":"完成並發布一支個人品牌短影音","tools":["ChatGPT","MyEdit","Canva"],"duration":180,"audience":"一般業務／業務主管","scores":{"aiDepth":4.6,"businessIntensity":3.8,"behaviorTransfer":4.4,"contentProduction":5,"knowledgeProductivity":1.8}},{"id":"north-gemini-notebooklm","title":"我的行動助理：Gemini & NotebookLM","region":"北區","level":"L1-L2 銜接","track":"知識生產力","salesStages":["需求分析"],"problem":"資料過多，整理摘要、報告與簡報耗時","promise":"把大量資料轉為結構化知識與可用報告","outcome":"將一份資料轉為摘要、報告或簡報","tools":["Gemini","NotebookLM"],"duration":160,"audience":"一般在職同仁","scores":{"aiDepth":3.3,"businessIntensity":2.4,"behaviorTransfer":3.8,"contentProduction":2.4,"knowledgeProductivity":5}},{"id":"north-career","title":"讓 AI 助攻你的精采職涯","region":"北區","level":"L3 整合","track":"職涯與增員","salesStages":["準客戶開發","約訪客戶","客戶服務"],"problem":"客群分層、再訪與增員缺少整合方法","promise":"把 AI 帶入客戶經營、再訪與組建團隊","outcome":"完成客群對話、增員素材或活動 DM","tools":["GPT","生成式 AI","Canva"],"duration":150,"audience":"兩年內新人／一般業務","scores":{"aiDepth":4.1,"businessIntensity":4.8,"behaviorTransfer":4.7,"contentProduction":3.4,"knowledgeProductivity":3.2}},{"id":"south-prompt-master","title":"AI 指令高手班","region":"南區","level":"L1-L2 銜接","track":"AI 基礎","salesStages":["準客戶開發","客戶服務"],"problem":"LINE 回覆與個人行銷素材產製耗時","promise":"用提示詞快速完成業務高頻文字與圖像素材","outcome":"產出 LINE 文案、Q 版貼圖及形象照","tools":["Gemini","GPT"],"duration":90,"audience":"一般業務","scores":{"aiDepth":2.8,"businessIntensity":3.6,"behaviorTransfer":4,"contentProduction":4.3,"knowledgeProductivity":2.1}},{"id":"south-chatgpt-assistant","title":"讓 ChatGPT 成為你的助理","region":"南區","level":"L2 應用","track":"客戶對話","salesStages":["約訪客戶","建議書說明與促成"],"problem":"不會整理資訊、自然開口、處理拒絕或增員","promise":"在談話前完成資料、話術與情境準備","outcome":"完成三種業務場景的提示詞與話術","tools":["ChatGPT"],"duration":60,"audience":"一般業務","scores":{"aiDepth":2.9,"businessIntensity":4.5,"behaviorTransfer":4.3,"contentProduction":2.3,"knowledgeProductivity":3.7}},{"id":"south-phone","title":"電話約訪 2.0","region":"南區","level":"L2-L3 銜接","track":"客戶對話","salesStages":["約訪客戶"],"problem":"害怕電訪，不會創造見面理由與處理拒絕","promise":"以利他服務與 AI 演練提升約訪信心","outcome":"完成客製化約訪流程並實際演練","tools":["GPT 電話約訪小助理"],"duration":90,"audience":"新人／一般業務","scores":{"aiDepth":2.7,"businessIntensity":5,"behaviorTransfer":4.9,"contentProduction":1.5,"knowledgeProductivity":2.4}},{"id":"south-sales-talk","title":"AI 解鎖整銷力：話術篇","region":"南區","level":"L2-L3 銜接","track":"客戶對話","salesStages":["建議書說明與促成","客戶服務"],"problem":"整銷工具推廣生硬，客戶缺乏安全感與共鳴","promise":"用客戶心理洞察設計更自然的整銷話術","outcome":"完成四項整銷情境話術演練","tools":["GPTs"],"duration":60,"audience":"業務新人","scores":{"aiDepth":2.3,"businessIntensity":4.8,"behaviorTransfer":4.6,"contentProduction":1.7,"knowledgeProductivity":2.2}},{"id":"south-workplace","title":"AI 職場神助手－首部曲：用 NotebookLM 打造數位第二大腦","region":"南區","level":"L2 應用","track":"知識生產力","salesStages":[],"problem":"會議錄音、跨文件資料與外文報告整理耗時，重點與待辦事項不易追蹤","promise":"運用 NotebookLM 整理合規資料、查證引用來源，快速產出會議摘要、待辦清單與管理簡報","outcome":"完成一份可執行的會議摘要與待辦清單，並產出附來源依據的簡報或資訊圖表","tools":["NotebookLM"],"duration":100,"audience":"區處主管","scores":{"aiDepth":3.4,"businessIntensity":2.3,"behaviorTransfer":4.1,"contentProduction":3.4,"knowledgeProductivity":5}}],"points":[{"id":"stage-prospect-plan","title":"準客戶輪廓與開發切入","category":"銷售流程","level":"L2","description":"依客群特徵整理可能需求、接觸理由與合適管道；AI 提供構想，名單與事實由同仁確認。","salesStages":["準客戶開發"]},{"id":"stage-prospect-content","title":"開發素材與訊息個人化","category":"銷售流程","level":"L2","description":"依受眾調整開場訊息、DM 與社群素材，避免未經查證的承諾或不當個資輸入。","salesStages":["準客戶開發"]},{"id":"stage-appointment-opening","title":"約訪開場與見面理由","category":"銷售流程","level":"L2","description":"把客戶情境轉成自然開場、清楚的見面理由與可選擇的下一步。","salesStages":["約訪客戶"]},{"id":"stage-appointment-objection","title":"拒絕澄清與再次邀約","category":"銷售流程","level":"L2","description":"先辨識拒絕原因，再設計尊重客戶意願的澄清與後續邀約方式。","salesStages":["約訪客戶"]},{"id":"stage-needs-question","title":"需求訪談與追問設計","category":"銷售流程","level":"L2","description":"從家庭、責任與目標等面向準備開放式問題；訪談內容須由同仁確認。","salesStages":["需求分析"]},{"id":"stage-needs-summary","title":"需求摘要與資料核對","category":"銷售流程","level":"L2","description":"整理客戶已確認的需求、缺口與待查資料，不以 AI 推測替代事實。","salesStages":["需求分析"]},{"id":"stage-proposal-template","title":"公司制式建議書流程","category":"銷售流程","level":"L1","description":"正式建議書使用公司制式系統與核定資料；目前沒有 AI 課程對應建議書產出。","salesStages":["建議書設計"]},{"id":"stage-proposal-review","title":"建議書資訊與合規核對","category":"銷售流程","level":"L1","description":"核對客戶需求、公司核定內容與應揭露事項；AI 不得自行產製正式建議書。","salesStages":["建議書設計"]},{"id":"stage-explain-story","title":"建議書重點說明","category":"銷售流程","level":"L2","description":"將公司制式建議書中的已核定資訊轉成客戶能理解的說明與提問順序，不更動正式內容。","salesStages":["建議書說明與促成"]},{"id":"stage-explain-objection","title":"異議理解與促成對話","category":"銷售流程","level":"L2","description":"以傾聽、澄清與回應練習處理疑慮，避免誇大或施壓。","salesStages":["建議書說明與促成"]},{"id":"stage-service-followup","title":"服務追蹤與關懷節奏","category":"銷售流程","level":"L2","description":"建立服務提醒、關懷主題與後續追蹤節奏，維持長期關係。","salesStages":["客戶服務"]},{"id":"stage-service-referral","title":"服務回饋與轉介紹","category":"銷售流程","level":"L2","description":"整理服務回饋與轉介紹時機，尊重客戶意願及個資界線。","salesStages":["客戶服務"]},{"id":"ai-basics","title":"生成式 AI 基本概念","category":"AI 素養","level":"L1","description":"理解生成式 AI 的能力、限制，以及適合交給 AI 協作的任務。","salesStages":[]},{"id":"fact-checking","title":"資料查證與來源判讀","category":"AI 素養","level":"L1","description":"辨識幻覺、過時資訊與錯誤內容，並以來源和人工覆核確認可信度。","salesStages":["需求分析","客戶服務"]},{"id":"privacy","title":"個資與機敏資料保護","category":"安全與倫理","level":"L1","description":"判斷哪些資料不得輸入 AI，並在必要時進行去識別化處理。","salesStages":[]},{"id":"copyright","title":"著作權與內容責任","category":"安全與倫理","level":"L1","description":"理解 AI 內容的引用、著作權及對外發布責任。","salesStages":["準客戶開發","客戶服務"]},{"id":"prompt","title":"結構化提示詞","category":"指令與對話","level":"L1","description":"用目的、背景、對象、限制與輸出格式組成清楚指令。","salesStages":[]},{"id":"iteration","title":"追問與迭代修正","category":"指令與對話","level":"L1","description":"透過補充條件、追問與評估，逐步改善 AI 產出。","salesStages":[]},{"id":"role-context","title":"角色與情境設定","category":"指令與對話","level":"L1","description":"設定角色、客戶情境與語氣，讓產出更符合業務目的。","salesStages":["約訪客戶","建議書說明與促成"]},{"id":"chatgpt","title":"ChatGPT 操作","category":"工具操作","level":"L1","description":"運用 ChatGPT 進行對話、改寫、構想與任務協作。","salesStages":[]},{"id":"gemini","title":"Gemini 操作","category":"工具操作","level":"L1","description":"運用 Gemini 處理文字、資料與多模態內容。","salesStages":[]},{"id":"notebooklm","title":"NotebookLM 來源型問答","category":"工具操作","level":"L2","description":"以指定來源問答並整合多份文件，保留可追溯的引用依據。","salesStages":["需求分析"]},{"id":"canva","title":"Canva 視覺設計","category":"工具操作","level":"L2","description":"運用版型、層級、色彩與排版完成清楚易讀的視覺內容。","salesStages":["準客戶開發","客戶服務"]},{"id":"image-generation","title":"AI 圖像生成","category":"內容產製","level":"L2","description":"以文字描述生成符合主題與受眾的圖像素材。","salesStages":["準客戶開發","客戶服務"]},{"id":"copywriting","title":"業務文案設計","category":"內容產製","level":"L2","description":"依目的、客群與管道產出自然且具行動引導的文字。","salesStages":["準客戶開發","約訪客戶","客戶服務"]},{"id":"dm","title":"DM 與活動宣傳","category":"內容產製","level":"L2","description":"把活動概念轉成可直接使用的宣傳文案與 DM。","salesStages":["準客戶開發","約訪客戶"]},{"id":"social-content","title":"梗圖與社群互動","category":"內容產製","level":"L2","description":"以梗圖、賀卡與輕量內容增加客戶互動及記憶點。","salesStages":["準客戶開發","客戶服務"]},{"id":"short-video","title":"短影音製作流程","category":"內容產製","level":"L3","description":"整合腳本、圖像、動態與後製，完成可發布的短影音。","salesStages":["準客戶開發","客戶服務"]},{"id":"prospecting","title":"客群洞察與開發","category":"業務應用","level":"L2","description":"整理客群特徵、需求與接觸切入點，支援準客戶開發。","salesStages":["準客戶開發"]},{"id":"appointment","title":"約訪話術設計","category":"業務應用","level":"L2","description":"依客戶情境設計自然的開場、見面理由與邀約流程。","salesStages":["約訪客戶"]},{"id":"objection","title":"拒絕與異議處理","category":"業務應用","level":"L2","description":"練習傾聽、澄清與回應拒絕，避免制式或強迫式話術。","salesStages":["約訪客戶","建議書說明與促成"]},{"id":"needs","title":"需求資料整理","category":"業務應用","level":"L2","description":"將訪談與資料整理成需求重點；正式建議書仍依公司制式流程辦理。","salesStages":["需求分析"]},{"id":"customer-service","title":"客戶關係經營","category":"業務應用","level":"L2","description":"規劃持續關懷、再訪與服務內容，支持長期關係與轉介紹。","salesStages":["客戶服務"]},{"id":"meeting-actions","title":"會議摘要與待辦","category":"工作流整合","level":"L2","description":"從會議內容整理決議、負責人、期限與可執行待辦。","salesStages":[]},{"id":"workflow","title":"跨工具工作流與 SOP","category":"工作流整合","level":"L3","description":"把多項工具串成可重複執行、檢核與持續改善的工作流程。","salesStages":[]}],"map":{"central-chatgpt-foundation":["ai-basics","fact-checking","privacy","prompt","iteration","chatgpt"],"central-dm":["prompt","chatgpt","canva","copywriting","dm","image-generation","stage-prospect-content"],"central-meme":["prompt","chatgpt","canva","image-generation","social-content","customer-service","stage-prospect-content","stage-service-followup"],"central-video":["prompt","chatgpt","canva","image-generation","short-video","workflow","stage-prospect-content"],"north-gemini-notebooklm":["gemini","notebooklm","fact-checking","needs","privacy","stage-needs-summary"],"north-career":["prospecting","appointment","customer-service","copywriting","dm","workflow","stage-prospect-plan","stage-appointment-opening","stage-service-followup"],"south-prompt-master":["prompt","iteration","role-context","gemini","chatgpt","copywriting","image-generation"],"south-chatgpt-assistant":["prompt","chatgpt","appointment","objection","needs","stage-appointment-opening","stage-appointment-objection","stage-needs-question"],"south-phone":["appointment","objection","role-context","iteration","chatgpt","stage-appointment-opening","stage-appointment-objection"],"south-sales-talk":["role-context","customer-service","objection","iteration","chatgpt","stage-explain-objection","stage-service-followup"],"south-workplace":["notebooklm","fact-checking","privacy","meeting-actions","workflow"]}};
+const REGIONS=['北區','中區','南區'];
+const TRACKS=['AI 基礎','內容行銷','客戶對話','知識生產力','職涯與增員'];
+const LEVELS=['L1 基礎','L1-L2 銜接','L2 應用','L2-L3 銜接','L3 整合'];
+const STAGES=['準客戶開發','約訪客戶','需求分析','建議書設計','建議書說明與促成','客戶服務'];
+const KEYS=['aiDepth','businessIntensity','behaviorTransfer','contentProduction','knowledgeProductivity'];
+const SL={businessIntensity:{label:'業務情境強度',low:'一般工作',high:'直接影響業務'},aiDepth:{label:'AI 應用深度',low:'單點操作',high:'跨工具整合'},behaviorTransfer:{label:'行為遷移強度',low:'課堂理解',high:'工作中持續使用'},contentProduction:{label:'內容產製比重',low:'非內容導向',high:'完成對外作品'},knowledgeProductivity:{label:'知識生產力',low:'資訊接收',high:'整理與決策'}};
+const AXIS_TXT={contentProduction:'衡量課程是否帶領同仁完成可直接使用的 DM、圖文或影音；越往右，對外作品產出越多。',businessIntensity:'衡量練習是否貼近開發、約訪、提案與服務等真實業務任務；越往右，業務情境越具體。',behaviorTransfer:'衡量學員是否會把課堂成果帶回工作、反覆實作；越往上，越重視實際使用與行為改變。',aiDepth:'衡量 AI 操作從單一功能到跨工具工作流的整合程度；越往上，應用方式越深入。'};
+const XOPT=['contentProduction','businessIntensity'],YOPT=['behaviorTransfer','aiDepth'];
+const RC={北區:'#4d67d8',中區:'#e36d4f',南區:'#0d8b72'};
+const STAGE_DESC={'準客戶開發':{p:'系統性蒐集潛在客戶名單，建立穩定客源。',a:'找到名單、建立接觸素材與被看見的理由'},'約訪客戶':{p:'取得與客戶面對面交流的機會。',a:'完成開口、邀請、電話約訪與拒絕應對'},'需求分析':{p:'精準掌握客戶需求、現況與保障缺口。',a:'有效發問、傾聽、整理資訊並量化需求'},'建議書設計':{p:'依公司制式建議書與核定流程，將客戶需求轉為合規的規劃內容。',a:'AI 可輔助需求整理與說明準備；正式建議書須使用公司制式流程，不由 AI 自行產製'},'建議書說明與促成':{p:'協助客戶理解保障規劃，處理疑慮並促成決定。',a:'清楚說明、搭配案例、處理拒絕與再次促成'},'客戶服務':{p:'深化長期關係，促進再購與轉介紹。',a:'主動服務、定期互動、再訪與創造有感體驗'}};
+const CAT_COLOR={'AI 素養':'#4d67d8','安全與倫理':'#d45c4a','指令與對話':'#8b5fc7','工具操作':'#0d8b72','內容產製':'#df8a32','業務應用':'#2c789b','工作流整合':'#8aa22e','銷售流程':'#87934a'};
+const CATS=Object.keys(CAT_COLOR);
+const lr=l=>LEVELS.indexOf(l);
+const PROFILES=[
+{id:'start',title:'AI 起步同仁',need:'還沒有穩定的提問方法，需要先把 AI 用進日常工作。',m:c=>lr(c.level)<=1},
+{id:'prospect',title:'拓客與內容經營同仁',need:'需要建立曝光、接觸素材與持續開發客源的方法。',m:c=>c.salesStages.includes('準客戶開發')&&c.scores.contentProduction>=3.4},
+{id:'conversation',title:'約訪與溝通突破同仁',need:'需要練習開口、處理拒絕與說明方案的對話。',m:c=>c.salesStages.some(s=>s==='約訪客戶'||s==='建議書說明與促成')&&c.scores.businessIntensity>=4},
+{id:'proposal',title:'需求分析與資料整理同仁',need:'需要把多份資料整理成可查證的重點與判斷依據；正式建議書仍依公司制式流程處理。',m:c=>c.salesStages.some(s=>s==='需求分析'||s==='建議書設計')||(c.track==='知識生產力'&&c.scores.knowledgeProductivity>=4.5)},
+{id:'service',title:'客戶維繫與再訪同仁',need:'需要持續互動、提供有感服務，創造再購與轉介紹。',m:c=>c.salesStages.includes('客戶服務')&&(c.scores.contentProduction>=4||c.scores.businessIntensity>=4.5)},
+{id:'management',title:'團隊管理支援同仁',need:'需要加快內部會議整理、管理簡報與資訊視覺化；不製作公司制式建議書。',m:c=>c.salesStages.length===0&&c.track==='知識生產力'}];
+
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=(v,d)=>{v=Number(v);return Number.isFinite(v)?v:d};
+const rcol=r=>RC[r]||'#7957a8';
+
+let courses=D.seed.map((c,i)=>({...c,ord:i}));
+let canEdit=false,dbc=null;
+const S={xKey:'contentProduction',yKey:'behaviorTransfer',stage:'全部',region:'全部',track:'全部',q:'',active:STAGES[0],prof:PROFILES[0].id,pc:null};
+
+function normCourse(c,id){
+  const sc=c.scores||{};const scores={};KEYS.forEach(k=>scores[k]=Math.max(1,Math.min(5,num(sc[k],3))));
+  return{id:String(id),title:String(c.title||'未命名課程'),region:String(c.region||'中區'),level:LEVELS.includes(c.level)?c.level:'L2 應用',track:TRACKS.includes(c.track)?c.track:'AI 基礎',
+    salesStages:Array.isArray(c.salesStages)?c.salesStages.filter(s=>STAGES.includes(s)):[],problem:String(c.problem||''),promise:String(c.promise||''),outcome:String(c.outcome||''),
+    tools:Array.isArray(c.tools)?c.tools.map(String):[],duration:Math.max(15,num(c.duration,90)),audience:String(c.audience||''),scores,ord:num(c.ord,0)};
+}
+function kpIds(c){
+  if(D.map[c.id])return D.map[c.id];
+  const t=`${c.title} ${c.problem} ${c.promise} ${c.outcome} ${c.tools.join(' ')}`.toLowerCase();const s=new Set();
+  if(/chatgpt|gpt/.test(t))s.add('chatgpt');if(/gemini/.test(t))s.add('gemini');if(/notebooklm/.test(t))s.add('notebooklm');if(/canva/.test(t))s.add('canva');
+  if(c.track==='AI 基礎')['ai-basics','prompt','privacy'].forEach(x=>s.add(x));
+  if(c.track==='內容行銷')['copywriting','image-generation'].forEach(x=>s.add(x));
+  if(c.track==='客戶對話')['role-context','objection'].forEach(x=>s.add(x));
+  if(c.track==='知識生產力')['fact-checking','workflow'].forEach(x=>s.add(x));
+  const g=x=>c.salesStages.includes(x);
+  if(g('準客戶開發')){s.add('prospecting');s.add('stage-prospect-plan')}
+  if(g('約訪客戶')){s.add('appointment');s.add('stage-appointment-opening')}
+  if(g('需求分析')){s.add('needs');s.add('stage-needs-summary')}
+  if(g('建議書說明與促成'))s.add('stage-explain-story');
+  if(g('客戶服務')){s.add('customer-service');s.add('stage-service-followup')}
+  if(c.level.includes('L3'))s.add('workflow');
+  return[...s].slice(0,9);
+}
+const byId=id=>courses.find(c=>c.id===id);
+const POINTS=D.points;
+
+/* ---------- hero ---------- */
+function renderHero(){
+  const mins=courses.reduce((a,c)=>a+c.duration,0),adv=courses.filter(c=>c.level.includes('L3')).length;
+  $('#metrics').innerHTML=`<button type="button" class="metric-btn" data-coll="all" aria-label="查看全部 ${courses.length} 門特色課程"><strong>${courses.length}</strong><span>門特色課程</span><small>查看課程 ↗</small></button><div><strong>${Math.round(mins/60)}</strong><span>總學習小時</span></div><button type="button" class="metric-btn" data-coll="adv" aria-label="查看 ${adv} 門進階整合課程"><strong>${adv}</strong><span>門進階整合</span><small>查看課程 ↗</small></button>`;
+  $$('#metrics [data-coll]').forEach(b=>b.onclick=()=>openColl(b.dataset.coll));
+  $('#radar').innerHTML=`<div class="hero-card-head"><span>區域課程雷達</span><small>即時資料</small></div>`+REGIONS.map(r=>{const rc=courses.filter(c=>c.region===r);const lead=TRACKS.map(t=>({t,n:rc.filter(c=>c.track===t).length})).sort((a,b)=>b.n-a.n)[0];return`<div class="region-row"><i style="background:${RC[r]}"></i><strong>${r}</strong><span>${rc.length?esc(lead.t):'尚無課程'}</span><b>${rc.length}</b></div>`}).join('')+`<div class="hero-note"><span>建議閱讀方式</span><p>先選工作問題，再比較課程深度與行為成果。</p></div>`;
+}
+/* ---------- filters ---------- */
+function stageOpts(){return'<option value="全部">全部流程</option>'+STAGES.map(s=>`<option>${s}</option>`).join('')+'<option value="跨流程支援">跨流程支援</option>'}
+function initControls(){
+  $('#selStage').innerHTML=stageOpts();$('#selStage2').innerHTML=stageOpts();
+  $('#selX').innerHTML=XOPT.map(k=>`<option value="${k}">${SL[k].label}</option>`).join('');
+  $('#selY').innerHTML=YOPT.map(k=>`<option value="${k}">${SL[k].label}</option>`).join('');
+  $('#selX').value=S.xKey;$('#selY').value=S.yKey;
+  $('#selTrack').innerHTML='<option value="全部">全部內容類型</option>'+TRACKS.map(t=>`<option>${t}</option>`).join('');
+  $('#regionLegend').innerHTML=REGIONS.map(r=>`<span><i style="background:${RC[r]}"></i>${r}</span>`).join('')+'<small>○ 圓點越大，課程時數越長</small>';
+  const setStage=v=>{S.stage=v;$('#selStage').value=v;$('#selStage2').value=v;renderScatter();renderTable()};
+  $('#selStage').onchange=e=>setStage(e.target.value);$('#selStage2').onchange=e=>setStage(e.target.value);
+  $('#selX').onchange=e=>{S.xKey=e.target.value;renderScatter()};$('#selY').onchange=e=>{S.yKey=e.target.value;renderScatter()};
+  $('#selTrack').onchange=e=>{S.track=e.target.value;renderTable()};
+  $('#q').oninput=e=>{S.q=e.target.value;renderTable()};
+  $('#regionChips').innerHTML=['全部',...REGIONS].map(r=>`<button type="button" data-r="${r}" class="${r==='全部'?'on':''}">${r==='全部'?'全部區域':r}</button>`).join('');
+  $$('#regionChips button').forEach(b=>b.onclick=()=>{S.region=b.dataset.r;$$('#regionChips button').forEach(x=>x.classList.toggle('on',x===b));renderTable()});
+}
+function filtered(){
+  const q=S.q.trim().toLowerCase();
+  return courses.filter(c=>{
+    const st=S.stage==='全部'||(S.stage==='跨流程支援'?c.salesStages.length===0:c.salesStages.includes(S.stage));
+    return(S.region==='全部'||c.region===S.region)&&(S.track==='全部'||c.track===S.track)&&st&&`${c.title}${c.problem}${c.tools.join('')}`.toLowerCase().includes(q);
+  });
+}
+/* ---------- scatter ---------- */
+function renderScatter(){
+  const xk=S.xKey,yk=S.yKey,list=filtered();
+  $('#scatter').innerHTML=`<div class="plot-shell" role="img" aria-label="${SL[xk].label}與${SL[yk].label}課程分布圖"><div class="quad q-tl">方法深化</div><div class="quad q-tr">策略整合</div><div class="quad q-bl">基礎啟動</div><div class="quad q-br">情境實作</div>
+<div class="axis y-axis"><span>${SL[yk].low}</span><strong>${SL[yk].label}</strong><span>${SL[yk].high}</span></div><div class="axis x-axis"><span>${SL[xk].low}</span><strong>${SL[xk].label}</strong><span>${SL[xk].high}</span></div>
+<div class="plot-area">${list.map((c,i)=>{const x=(c.scores[xk]-1)/4*88+6,y=(c.scores[yk]-1)/4*84+8,size=Math.max(62,Math.min(76,58+c.duration/9)),j=((i%3)-1)*.8;
+return`<button type="button" class="bubble" data-id="${esc(c.id)}" style="left:${Math.min(95,Math.max(4,x+j))}%;bottom:${Math.min(92,Math.max(4,y))}%;width:${size}px;height:${size}px;background:${rcol(c.region)}" title="${esc(c.title)}｜${esc(c.region)}｜${c.duration} 分鐘"><span>${esc(c.title.replace(/AI|ChatGPT|Gemini|Canva/gi,'').trim().slice(0,5))}</span></button>`}).join('')}</div></div>`;
+  $$('#scatter .bubble').forEach(b=>b.onclick=()=>openCourse(b.dataset.id));
+  $('#dimNotes').innerHTML=[...XOPT,...YOPT].map(k=>`<div class="${k===xk||k===yk?'on':''}"><span>${XOPT.includes(k)?'橫軸':'縱軸'} · ${SL[k].label}</span><p>${AXIS_TXT[k]}</p><small>低：${SL[k].low}　／　高：${SL[k].high}</small></div>`).join('');
+}
+/* ---------- table ---------- */
+function renderTable(){
+  const list=filtered();
+  $('#tbody').innerHTML=list.map(c=>`<tr data-id="${esc(c.id)}" tabindex="0"><td><div class="cell"><i style="background:${rcol(c.region)}"></i><div><strong>${esc(c.title)}</strong><small>${esc(c.region)} · ${esc(c.level)} · ${c.duration} 分鐘 · ${esc(c.audience)}</small></div></div></td><td><div class="stage-tags">${c.salesStages.length?c.salesStages.map(s=>`<span>${s}</span>`).join(''):'<span>跨流程・內部管理支援</span>'}</div></td><td>${esc(c.problem)}</td><td>${esc(c.promise)}</td><td>${esc(c.outcome)}<b aria-hidden="true">↗</b></td></tr>`).join('');
+  $('#tblEmpty').hidden=list.length>0;
+  $$('#tbody tr').forEach(r=>{r.onclick=()=>openCourse(r.dataset.id);r.onkeydown=e=>{if(e.key==='Enter')openCourse(r.dataset.id)}});
+}
+/* ---------- paths ---------- */
+function renderPaths(){
+  $('#pathTabs').innerHTML=STAGES.map((s,i)=>`<button type="button" class="${S.active===s?'on':''}" data-s="${s}"><span>${String(i+1).padStart(2,'0')}</span><div><strong>${s}</strong><small>${courses.filter(c=>c.salesStages.includes(s)).length} 門課</small></div></button>`).join('');
+  $$('#pathTabs button').forEach(b=>b.onclick=()=>{S.active=b.dataset.s;renderPaths()});
+  const list=courses.filter(c=>c.salesStages.includes(S.active)).sort((a,b)=>lr(a.level)-lr(b.level)),d=STAGE_DESC[S.active];
+  $('#pathContent').innerHTML=`<div class="path-title"><div><span>${String(STAGES.indexOf(S.active)+1).padStart(2,'0')}</span><div><h3>${S.active}</h3><p>${d.p}</p></div></div><small>${list.length} 門支援課程</small></div><div class="stage-action"><span>此階段關鍵行為</span><p>${d.a}</p></div><div class="timeline">${list.map((c,i)=>`<button type="button" class="step" data-id="${esc(c.id)}"><span class="step-i">${String(i+1).padStart(2,'0')}</span><div><small>${esc(c.level)} · ${esc(c.region)}</small><strong>${esc(c.title)}</strong><p>${esc(c.outcome)}</p><div class="tags compact">${c.tools.slice(0,3).map(t=>`<span>${esc(t)}</span>`).join('')}</div></div><b>↗</b></button>`).join('')}${list.length?'':`<div class="empty">${S.active==='建議書設計'?'建議書設計目前沒有對應課程；正式建議書依公司制式流程辦理。':'此銷售階段尚無支援課程，是下一步可優先補足的能力缺口。'}</div>`}</div>`;
+  $$('#pathContent .step').forEach(b=>b.onclick=()=>openCourse(b.dataset.id));
+}
+/* ---------- personas ---------- */
+function renderPersonas(){
+  const ac=S.pc?byId(S.pc):null,ap=PROFILES.find(p=>p.id===S.prof)||PROFILES[0],n=courses.length;
+  const h=Math.max(760,n*74);
+  const links=[];PROFILES.forEach((p,pi)=>courses.forEach((c,ci)=>{if(p.m(c))links.push([p,pi,c,ci])}));
+  $('#pGraph').style.height=h+'px';
+  $('#pGraph').innerHTML=`<div class="p-nodes" aria-label="業務同仁類型">${PROFILES.map(p=>{const rel=!ac||p.m(ac);return`<button type="button" class="p-node ${!ac&&S.prof===p.id?'on':''} ${ac&&rel?'linked':''} ${ac&&!rel?'muted':''}" data-p="${p.id}" aria-pressed="${!ac&&S.prof===p.id}"><strong>${p.title}</strong><small>${courses.filter(p.m).length} 門適合課程</small></button>`}).join('')}</div>
+<svg class="p-edges" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">${links.map(([p,pi,c,ci])=>{const sy=(pi+.5)/PROFILES.length*1000,ey=(ci+.5)/n*1000,on=ac?ac.id===c.id:S.prof===p.id;return`<path d="M 0 ${sy} C 380 ${sy}, 620 ${ey}, 1000 ${ey}" class="${on?'active':'muted'}"/>`}).join('')}</svg>
+<div class="c-nodes" aria-label="課程">${courses.map(c=>{const lk=ac?ac.id===c.id:ap.m(c);return`<div class="c-node ${lk?'linked':'muted'}"><button type="button" data-c="${esc(c.id)}" aria-pressed="${ac?.id===c.id}"><i style="background:${rcol(c.region)}"></i><span><strong>${esc(c.title)}</strong><small>${esc(c.region)} · ${esc(c.level)}</small></span></button><button type="button" class="go" data-open="${esc(c.id)}" aria-label="查看${esc(c.title)}詳情">↗</button></div>`}).join('')}</div>`;
+  $$('#pGraph [data-p]').forEach(b=>b.onclick=()=>{S.prof=b.dataset.p;S.pc=null;renderPersonas()});
+  $$('#pGraph [data-c]').forEach(b=>b.onclick=()=>{S.pc=S.pc===b.dataset.c?null:b.dataset.c;renderPersonas()});
+  $$('#pGraph [data-open]').forEach(b=>b.onclick=()=>openCourse(b.dataset.open));
+  const con=courses.filter(ap.m);
+  $('#pSummary').innerHTML=ac?`<span>課程連結</span><h3>${esc(ac.title)}</h3><p>適合：${PROFILES.filter(p=>p.m(ac)).map(p=>p.title).join('、')||'目前沒有符合的同仁類型'}。預期帶回工作：${esc(ac.outcome)}</p>`:`<span>同仁需求</span><h3>${ap.title}</h3><p>${ap.need}</p><small>建議課程：${con.length?con.map(c=>esc(c.title)).join('、'):'目前沒有符合的課程，可視為待補課程缺口。'}</small>`;
+}
+/* ---------- overlays ---------- */
+function showOverlay(html,cls=''){
+  const o=$('#overlay');o.innerHTML=`<div class="backdrop ${cls==='form'?'center':''}" id="bd">${html}</div>`;
+  $('#bd').onmousedown=e=>{if(e.target.id==='bd')closeOverlay()};
+  const x=$('#overlay .x');if(x){x.onclick=closeOverlay;x.focus()}
+}
+function closeOverlay(){$('#overlay').innerHTML=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay()});
+function scoreBars(c){return`<div class="scores">${KEYS.map(k=>`<div class="score-row"><span>${SL[k].label}</span><div class="track"><i style="width:${c.scores[k]*20}%"></i></div><b>${c.scores[k].toFixed(1)}</b></div>`).join('')}</div>`}
+function openCourse(id){
+  const c=byId(id);if(!c)return;
+  showOverlay(`<article class="panel" role="dialog" aria-modal="true" aria-label="${esc(c.title)}"><button class="x" aria-label="關閉課程詳情">×</button>
+<div class="kick"><i style="background:${rcol(c.region)}"></i>${esc(c.region)} · ${esc(c.level)}</div><h2>${esc(c.title)}</h2><p class="promise">${esc(c.promise)}</p>
+<div class="blk"><small>解決的業務問題</small><p>${esc(c.problem)}</p></div><div class="blk"><small>期待行為成果</small><p>${esc(c.outcome)}</p></div>
+${c.id==='south-workplace'?'<div class="blk"><small>資料使用提醒</small><p>練習時不得上傳客戶個資、公司機敏資料或未對外公開資訊；AI 產出須核對來源，不取代主管的專業判斷。</p></div>':''}
+<div class="tags dark">${c.salesStages.length?c.salesStages.map(s=>`<span>${s}</span>`).join(''):'<span>跨流程・內部管理支援</span>'}</div><div class="tags">${c.tools.map(t=>`<span>${esc(t)}</span>`).join('')}</div>
+${scoreBars(c)}<div class="meta"><span>${c.duration} 分鐘</span><span>${esc(c.audience)}</span><span>${esc(c.track)}</span></div>
+${canEdit?'<div class="form-actions" style="justify-content:flex-start;margin-top:22px"><button class="btn btn-soft" id="editThis">編輯這門課</button></div>':''}</article>`);
+  if(canEdit)$('#editThis').onclick=()=>openForm(c);
+}
+function openColl(kind){
+  const list=kind==='adv'?courses.filter(c=>c.level.includes('L3')):courses,title=kind==='adv'?'進階整合課程':'特色課程總覽';
+  showOverlay(`<section class="panel wide" role="dialog" aria-modal="true" aria-label="${title}"><button class="x" aria-label="關閉課程清單">×</button><span class="eyebrow">課程快速瀏覽</span><h2>${title}</h2><p style="color:var(--ink-soft)">共 ${list.length} 門課程，點選即可查看完整定位與課程資訊。</p><div class="coll">${list.map(c=>`<button type="button" data-id="${esc(c.id)}"><i style="background:${rcol(c.region)}"></i><span><small>${esc(c.region)} · ${esc(c.level)} · ${c.duration} 分鐘</small><strong>${esc(c.title)}</strong><em>${esc(c.problem)}</em></span><b>↗</b></button>`).join('')}</div></section>`);
+  $$('#overlay .coll button').forEach(b=>b.onclick=()=>openCourse(b.dataset.id));
+}
+/* ---------- upload analysis ---------- */
+const loadScript=src=>new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('無法載入解析元件，請檢查網路後重試'));document.head.appendChild(s)});
+async function extractFileText(file){
+  const n=file.name.toLowerCase(),buf=await file.arrayBuffer();
+  if(n.endsWith('.docx')){
+    if(!window.mammoth)await loadScript('https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js');
+    return(await window.mammoth.extractRawText({arrayBuffer:buf})).value;
+  }
+  if(n.endsWith('.pdf')){
+    if(!window.pdfjsLib)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise,pages=[];
+    for(let i=1;i<=pdf.numPages;i++){const ct=await(await pdf.getPage(i)).getTextContent();pages.push(ct.items.map(it=>it.str||'').join(' '))}
+    return pages.join('\n');
+  }
+  throw new Error('目前支援 PDF 與 DOCX 課程規劃書');
+}
+function analyzeCourse(text,fileName){
+  const t=text.replace(/[\t ]+/g,' ');
+  const sc=(groups,base)=>Math.min(5,Number((base+groups.reduce((a,g)=>a+(g.some(w=>t.includes(w))?1:0),0)*.72).toFixed(1)));
+  const tm=t.match(/課程名稱\s*[:：]?\s*([^\n]{2,55})/);
+  const title=(tm?tm[1]:fileName.replace(/\.(pdf|docx)$/i,'')).replace(/課程規劃書/g,'').replace(/[【】_]/g,' ').trim();
+  const hm=t.match(/(?:授課時數|時\s*數)\s*[:：]?\s*(\d+(?:\.\d+)?)\s*(小時|分鐘|分)/);
+  const duration=hm?Math.round(Number(hm[1])*(hm[2]==='小時'?60:1)):90;
+  const lower=t.toLowerCase(),tools=['ChatGPT','GPT','Gemini','NotebookLM','Canva','MyEdit','Felo','Napkin AI','Raphael AI'].filter(x=>lower.includes(x.toLowerCase()));
+  let track='AI 基礎';
+  if(/約訪|拒絕|話術|客戶對話|開口/.test(t))track='客戶對話';else if(/短影音|梗圖|DM|社群|文案|品牌/.test(t))track='內容行銷';
+  else if(/增員|組建|職涯|客群分層/.test(t))track='職涯與增員';else if(/會議|摘要|簡報|資料|知識|報告/.test(t))track='知識生產力';
+  const st=new Set();
+  if(/名單|客源|陌生開發|職域|增員|社群|個人品牌/.test(t))st.add('準客戶開發');if(/約訪|電話|見面|邀請|拜訪理由/.test(t))st.add('約訪客戶');
+  if(/需求|缺口|保單健檢|客群分層|傾聽|發問/.test(t))st.add('需求分析');if(/建議書|保障規劃|方案比較/.test(t))st.add('建議書設計');
+  if(/促成|拒絕|異議|成交|說明|話術/.test(t))st.add('建議書說明與促成');if(/客戶服務|再訪|賀卡|關係|整銷|定期問候|轉介紹/.test(t))st.add('客戶服務');
+  if(!st.size&&track!=='知識生產力')st.add('準客戶開發');
+  const aiDepth=sc([['提示詞','Prompt','PROMPT'],['實作','操作'],['整合','工作流'],['進階','跨工具'],['成果','產出']],1.4);
+  const scores={aiDepth,businessIntensity:sc([['業務'],['客戶'],['約訪','拜訪'],['成交','增員'],['拒絕','話術']],1.2),
+    behaviorTransfer:sc([['實作'],['演練','練習'],['課後','行動'],['成果發表','作品'],['業務情境','案例']],1.5),
+    contentProduction:sc([['文案'],['圖片','圖像'],['DM','梗圖'],['短影音','影片'],['Canva']],1.1),
+    knowledgeProductivity:sc([['資料'],['摘要','整理'],['簡報'],['會議','待辦'],['報告','知識']],1.2)};
+  const level=aiDepth>=4.2?'L3 整合':aiDepth>=3.5?'L2-L3 銜接':aiDepth>=2.8?'L2 應用':'L1-L2 銜接';
+  const am=t.match(/目標學員\s*[:：]?\s*([^\n]{2,48})/),rm=t.match(/北區|中區|南區/);
+  return{title,region:rm?rm[0]:'中區',level,track,salesStages:[...st],duration,scores,tools:tools.length?tools:['生成式 AI'],audience:am?am[1].trim():'一般業務',
+    problem:{客戶對話:'客戶互動與話術準備需要強化',內容行銷:'業務內容產製耗時、缺少素材',知識生產力:'資料整理與轉化耗費時間',職涯與增員:'客戶經營與增員缺少整合方法'}[track]||'缺乏穩定使用 AI 的方法',
+    promise:'運用常見 AI 工具完成可帶回工作的真實任務',
+    outcome:{客戶對話:'完成一組可實際演練的業務話術',內容行銷:'完成一項可直接使用的客戶內容',知識生產力:'完成一份摘要、報告或簡報'}[track]||'完成一項真實業務任務'};
+}
+function fillForm(d){
+  const set=(id,v)=>{$('#'+id).value=v};
+  set('f_title',d.title);set('f_region',d.region);set('f_level',d.level);set('f_track',d.track);set('f_duration',d.duration);
+  set('f_problem',d.problem);set('f_promise',d.promise);set('f_outcome',d.outcome);set('f_tools',d.tools.join('、'));set('f_audience',d.audience);
+  $$('input[name=fs]').forEach(b=>b.checked=d.salesStages.includes(b.value));
+  KEYS.forEach(k=>{set('s_'+k,d.scores[k]);$('#v_'+k).textContent=d.scores[k].toFixed(1)});
+}
+/* ---------- editor ---------- */
+function openForm(c){
+  const d=c||{title:'',region:'中區',level:'L2 應用',track:'AI 基礎',salesStages:[],problem:'',promise:'',outcome:'',tools:[],duration:90,audience:'一般業務',scores:Object.fromEntries(KEYS.map(k=>[k,3]))};
+  const opt=(arr,v)=>arr.map(x=>`<option ${x===v?'selected':''}>${x}</option>`).join('');
+  showOverlay(`<form class="panel form" id="cform" role="dialog" aria-modal="true" aria-label="${c?'編輯課程':'新增課程'}"><button type="button" class="x" aria-label="關閉">×</button>
+<span class="eyebrow">${c?'編輯課程':'新增課程'}</span><h2 style="font-size:26px;margin:8px 0 6px">${c?'修改課程定位':'加入新的課程'}</h2><p style="margin:0 0 18px;color:var(--ink-soft)">儲存後，所有開啟此頁的人會立即看到更新。</p>
+${c?'':'<label class="drop" id="dz"><input type="file" id="dzf" accept=".pdf,.docx"><b id="dzt">＋ 上傳課程規劃書（PDF／DOCX）自動帶入</b><small id="dzs">檔案只在你的瀏覽器內讀取，不會上傳；解析結果請在下方確認修正</small></label>'}
+<div class="fgrid"><label class="wide">課程名稱<input type="text" id="f_title" required maxlength="120" value="${esc(d.title)}"></label>
+<label>區域<select id="f_region">${opt(REGIONS,d.region)}</select></label><label>分級<select id="f_level">${opt(LEVELS,d.level)}</select></label>
+<label>學習路徑<select id="f_track">${opt(TRACKS,d.track)}</select></label><label>時數（分鐘）<input type="number" id="f_duration" min="15" max="600" value="${d.duration}"></label>
+<label class="wide">解決的業務問題<input type="text" id="f_problem" maxlength="200" value="${esc(d.problem)}"></label><label class="wide">課程獨特承諾<input type="text" id="f_promise" maxlength="200" value="${esc(d.promise)}"></label><label class="wide">期待行為成果<input type="text" id="f_outcome" maxlength="200" value="${esc(d.outcome)}"></label>
+<label>主要工具（用頓號分隔）<input type="text" id="f_tools" maxlength="120" value="${esc(d.tools.join('、'))}"></label><label>目標學員<input type="text" id="f_audience" maxlength="80" value="${esc(d.audience)}"></label>
+<div class="fld wide"><span>銷售流程定位（可複選；純內部管理支援可不勾選）</span><div class="checks">${STAGES.map(s=>`<label><input type="checkbox" name="fs" value="${s}" ${d.salesStages.includes(s)?'checked':''}>${s}</label>`).join('')}</div></div>
+<div class="sliders wide"><strong style="font-size:13px">定位構面（1–5）</strong>${KEYS.map(k=>`<label><span>${SL[k].label}</span><input type="range" min="1" max="5" step="0.1" id="s_${k}" value="${d.scores[k]}"><b id="v_${k}">${Number(d.scores[k]).toFixed(1)}</b></label>`).join('')}</div></div>
+<div class="form-actions" style="margin-top:16px">${c?'<button type="button" class="btn btn-ghost" id="delBtn">刪除課程</button>':''}<button type="button" class="btn btn-ghost" id="cancelBtn">取消</button><button type="submit" class="btn btn-primary" id="saveBtn">儲存課程</button></div><p class="msg" id="fmsg" hidden role="status"></p></form>`,'form');
+  KEYS.forEach(k=>$('#s_'+k).oninput=e=>{$('#v_'+k).textContent=Number(e.target.value).toFixed(1)});
+  $('#cancelBtn').onclick=closeOverlay;
+  const msg=(t,err)=>{const m=$('#fmsg');m.hidden=false;m.className='msg'+(err?' err':'');m.textContent=t};
+  const dz=$('#dz');
+  if(dz){
+    const take=async f=>{
+      if(!f)return;dz.classList.add('busy');$('#dzt').textContent='正在讀取「'+f.name+'」…';
+      try{
+        const text=await extractFileText(f);
+        if(text.trim().length<20)throw new Error('文件文字不足（掃描檔無法解析），請改用可選取文字的檔案');
+        fillForm(analyzeCourse(text,f.name));
+        $('#dzt').textContent='✓ 已帶入「'+f.name+'」';$('#dzs').textContent='這是依關鍵字做的初步定位，請逐項確認後再儲存；可重新選擇其他檔案';
+        msg('AI 初步定位完成，請確認各欄位與五項構面。');
+      }catch(err){$('#dzt').textContent='＋ 上傳課程規劃書（PDF／DOCX）自動帶入';msg(err&&err.message?err.message:'無法解析這份文件',true)}
+      dz.classList.remove('busy');
+    };
+    $('#dzf').onchange=e=>take(e.target.files[0]);
+    dz.ondragover=e=>{e.preventDefault();dz.classList.add('over')};dz.ondragleave=()=>dz.classList.remove('over');
+    dz.ondrop=e=>{e.preventDefault();dz.classList.remove('over');take(e.dataTransfer.files[0])};
+  }
+  if(c)$('#delBtn').onclick=async e=>{
+    if(e.target.textContent!=='再按一次確認刪除'){e.target.textContent='再按一次確認刪除';return}
+    try{await dbc.doc(c.id).delete();closeOverlay()}catch{msg('刪除失敗，請稍後再試。',true)}};
+  $('#cform').onsubmit=async e=>{
+    e.preventDefault();if(!dbc)return;
+    const scores={};KEYS.forEach(k=>scores[k]=Number(num($('#s_'+k).value,3).toFixed(1)));
+    const data={title:$('#f_title').value.trim(),region:$('#f_region').value,level:$('#f_level').value,track:$('#f_track').value,salesStages:$$('input[name=fs]:checked').map(b=>b.value),
+      problem:$('#f_problem').value.trim(),promise:$('#f_promise').value.trim(),outcome:$('#f_outcome').value.trim(),tools:$('#f_tools').value.split(/[、,，]/).map(s=>s.trim()).filter(Boolean),
+      duration:Math.max(15,num($('#f_duration').value,90)),audience:$('#f_audience').value.trim(),scores,ord:c?c.ord:Date.now()};
+    const id=c?c.id:'c'+Date.now().toString(36);
+    $('#saveBtn').disabled=true;
+    try{await dbc.doc(id).set(data);closeOverlay()}catch(err){msg('儲存失敗：'+(err&&err.code==='invalid_argument'?'你沒有編輯權限。':'請稍後再試。'),true);$('#saveBtn').disabled=false}
+  };
+}
+
+/* ---------- knowledge graph ---------- */
+const K={sel:null,cat:'全部',exp:null,q:'',zoom:1,yaw:0,pitch:0,layout:0,fit:1,drag:null,moved:false};
+const GW=1120,GH=760,CX=GW/2,CY=GH/2;
+let kNodes=[],kLines=[];
+function kPos(){
+  const cs=courses.map((c,i)=>{const a=-Math.PI/2+Math.PI*2*i/Math.max(courses.length,1)+K.layout*.19;return{t:'course',id:c.id,x:CX+Math.cos(a)*185,y:CY+Math.sin(a)*145,z:Math.sin(a*2)*150}});
+  const ps=CATS.flatMap((cat,ci)=>{const pts=POINTS.filter(p=>p.category===cat),a=-Math.PI/2+Math.PI*2*ci/CATS.length+K.layout*.12,cx=CX+Math.cos(a)*405,cy=CY+Math.sin(a)*270;
+    return pts.map((p,pi)=>{const sp=(pi-(pts.length-1)/2)*35;return{t:'point',id:p.id,x:cx-Math.sin(a)*sp,y:cy+Math.cos(a)*sp,z:Math.cos(a*1.7+pi*.7)*225}})});
+  const ss=STAGES.map((s,i)=>{const a=-Math.PI/2+Math.PI*2*i/STAGES.length;return{t:'stage',id:s,x:CX+Math.cos(a)*310,y:CY+Math.sin(a)*215,z:Math.sin(a*1.5)*165}});
+  return[...ss,...cs,...ps];
+}
+function kProject(n){
+  const yaw=K.yaw*Math.PI/180,pitch=K.pitch*Math.PI/180,x=n.x-CX,y=n.y-CY,ty=y*Math.cos(pitch)-n.z*Math.sin(pitch),tz=y*Math.sin(pitch)+n.z*Math.cos(pitch),
+    rx=x*Math.cos(yaw)+tz*Math.sin(yaw),rz=-x*Math.sin(yaw)+tz*Math.cos(yaw),dp=Math.max(.72,Math.min(1.28,1+rz/1150));
+  return{x:CX+rx*dp,y:CY+ty*dp,dp};
+}
+function kBuild(){
+  kNodes=kPos();const w=$('#kgWorld');
+  let svg='<svg viewBox="0 0 '+GW+' '+GH+'" aria-hidden="true">';kLines=[];
+  courses.forEach(c=>kpIds(c).forEach(pid=>{if(POINTS.some(p=>p.id===pid))kLines.push({a:'course:'+c.id,b:'point:'+pid,kind:'cp',c:c.id,p:pid})}));
+  POINTS.forEach(p=>p.salesStages.forEach(s=>kLines.push({a:'point:'+p.id,b:'stage:'+s,kind:'ps',p:p.id,s})));
+  kLines.forEach((l,i)=>svg+=`<line data-l="${i}"/>`);svg+='</svg>';
+  const btn=n=>{
+    if(n.t==='stage')return`<button type="button" class="kn stage" data-k="stage:${esc(n.id)}" aria-label="銷售流程：${esc(n.id)}"><i></i><span>${esc(n.id)}</span></button>`;
+    if(n.t==='course'){const c=byId(n.id);return`<button type="button" class="kn course" data-k="course:${esc(n.id)}" aria-label="課程：${esc(c.title)}"><i></i><span>${esc(c.title)}</span></button>`}
+    const p=POINTS.find(x=>x.id===n.id);return`<button type="button" class="kn point" data-k="point:${esc(n.id)}" style="color:${CAT_COLOR[p.category]}" aria-label="知識點：${esc(p.title)}"><i></i><span>${esc(p.title)}</span></button>`;
+  };
+  w.innerHTML=svg+kNodes.map(btn).join('');
+  kNodes.forEach(n=>{n.el=w.querySelector(`[data-k="${CSS.escape(n.t+':'+n.id)}"]`)});
+  kLines.forEach((l,i)=>l.el=w.querySelector(`[data-l="${i}"]`));
+  kUpdate();
+}
+function kState(){
+  const sc=K.sel&&K.sel.t==='course'?byId(K.sel.id):null,sp=K.sel&&K.sel.t==='point'?POINTS.find(p=>p.id===K.sel.id):null,ss=K.sel&&K.sel.t==='stage'?K.sel.id:null;
+  const cp=new Set(sc?kpIds(sc):[]),cc=new Set(sp?courses.filter(c=>kpIds(c).includes(sp.id)).map(c=>c.id):[]),q=K.q.trim().toLowerCase();
+  const cm=c=>!q||`${c.title} ${c.problem} ${c.tools.join(' ')}`.toLowerCase().includes(q);
+  const pm=p=>(!q||`${p.title} ${p.description}`.toLowerCase().includes(q))&&(K.cat==='全部'||p.category===K.cat);
+  const cDim=c=>!cm(c)||(K.cat!=='全部'&&!kpIds(c).some(id=>POINTS.find(p=>p.id===id)?.category===K.cat))||(sp&&!cc.has(c.id))||(ss&&!c.salesStages.includes(ss));
+  const pDim=p=>!pm(p)||(sc&&!cp.has(p.id))||(ss&&!p.salesStages.includes(ss));
+  const sDim=s=>(sp&&!sp.salesStages.includes(s))||(sc&&!sc.salesStages.includes(s))||(ss&&ss!==s);
+  return{sc,sp,ss,cc,cDim,pDim,sDim};
+}
+function kUpdate(){
+  if(!kNodes.length)return;
+  const st=kState(),pos=new Map();
+  kNodes.forEach(n=>{const p=kProject(n);pos.set(n.t+':'+n.id,p);if(!n.el)return;n.el.style.left=p.x+'px';n.el.style.top=p.y+'px';n.el.style.zIndex=Math.round(p.dp*10);
+    let dim=false,act=K.sel&&K.sel.t===n.t&&K.sel.id===n.id;
+    if(n.t==='course')dim=!!st.cDim(byId(n.id));else if(n.t==='point')dim=!!st.pDim(POINTS.find(p=>p.id===n.id));else dim=!!st.sDim(n.id);
+    n.el.classList.toggle('dim',dim);n.el.classList.toggle('active',!!act);});
+  kLines.forEach(l=>{const a=pos.get(l.a),b=pos.get(l.b);if(!a||!b||!l.el)return;l.el.setAttribute('x1',a.x);l.el.setAttribute('y1',a.y);l.el.setAttribute('x2',b.x);l.el.setAttribute('y2',b.y);
+    let act=false,dim=false;
+    if(l.kind==='cp'){act=K.sel?(K.sel.t==='course'?l.c===K.sel.id:(K.sel.t==='point'&&l.p===K.sel.id)):false;dim=!!st.cDim(byId(l.c))||!!st.pDim(POINTS.find(p=>p.id===l.p))}
+    else{act=K.sel?((K.sel.t==='stage'&&K.sel.id===l.s)||(K.sel.t==='point'&&K.sel.id===l.p)):false;dim=!!st.pDim(POINTS.find(p=>p.id===l.p))}
+    l.el.classList.toggle('active',act);l.el.classList.toggle('dim',dim)});
+}
+function kFit(){
+  const w=$('#kgCanvas').clientWidth,h=$('#kgCanvas').clientHeight;K.fit=Math.min(1,w/(GW+40),h/(GH+20));
+  $('#kgWorld').style.transform=`scale(${(K.fit*K.zoom).toFixed(3)})`;$('#kgZ').textContent=Math.round(K.zoom*100)+'%';
+}
+function kLegend(){
+  const sel=(t,id)=>{K.sel={t,id};kRender()};
+  const row=(label,color,n,key,items,onItem)=>`<div><button type="button" class="${K.exp===key||K.cat===key?'on':''}" data-row="${esc(key)}"><i style="background:${color}"></i>${esc(label)}<span>${n}</span></button>${K.exp===key?`<div class="kg-items">${items.map(it=>`<button type="button" data-it="${esc(it[0])}">${esc(it[1])}</button>`).join('')}</div>`:''}</div>`;
+  $('#kgLegend').innerHTML='<strong>圖例</strong>'+row('課程','#27372e',courses.length,'課程',courses.map(c=>[c.id,c.title]))+row('銷售六大流程','#87934a',6,'銷售六大流程',STAGES.map(s=>[s,s]))+CATS.filter(c=>c!=='銷售流程'||true).map(cat=>row(cat,CAT_COLOR[cat],POINTS.filter(p=>p.category===cat).length,cat,POINTS.filter(p=>p.category===cat).map(p=>[p.id,p.title]))).join('')+'<button type="button" class="kg-clear" id="kgClear">清除篩選</button>';
+  $$('#kgLegend [data-row]').forEach(b=>b.onclick=()=>{
+    const key=b.dataset.row;
+    if(key==='課程'||key==='銷售六大流程'){K.exp=K.exp===key?null:key;K.cat='全部'}
+    else{K.cat=K.cat===key?'全部':key;K.exp=K.exp===key?null:key}
+    kRender()});
+  $$('#kgLegend [data-it]').forEach(b=>b.onclick=()=>{const key=K.exp;sel(key==='課程'?'course':key==='銷售六大流程'?'stage':'point',b.dataset.it)});
+  $('#kgClear').onclick=()=>{K.sel=null;K.cat='全部';K.exp=null;K.q='';$('#kgQ').value='';kRender()};
+}
+function kDetail(){
+  const st=kState(),d=$('#kgDetail'),btn=(t,id,label)=>`<button type="button" data-go="${t}:${esc(id)}">${esc(label)}</button>`;
+  let h='';
+  if(!K.sel)h='<div class="kd-empty"><strong>探索知識網路</strong><p>點選左側分類、流程，或畫布中的節點，查看知識與課程的直接關聯。</p><span>深色圓點＝課程</span><span>橄欖綠＝銷售流程</span><span>其他色點＝知識點</span></div>';
+  else if(st.ss){h=`<div class="kd-head"><i style="background:#87934a"></i><span>銷售六大流程</span></div><h3>${esc(st.ss)}</h3><p>${st.ss==='建議書設計'?'正式建議書依公司制式系統辦理；此階段目前沒有對應 AI 課程。':'此階段所需知識與現有課程的關聯。'}</p><div class="kd-block"><small>階段知識點</small><div>${POINTS.filter(p=>p.salesStages.includes(st.ss)).map(p=>btn('point',p.id,p.title)).join('')}</div></div><div class="kd-block"><small>對應課程</small><div>${courses.filter(c=>c.salesStages.includes(st.ss)).map(c=>btn('course',c.id,c.title)).join('')}${st.ss==='建議書設計'?'<span>暫無對應課程</span>':''}</div></div>`}
+  else if(st.sc){const c=st.sc;h=`<div class="kd-head"><i style="background:${rcol(c.region)}"></i><span>課程節點 · ${esc(c.region)}</span></div><h3>${esc(c.title)}</h3><p>${esc(c.problem)}</p><div class="kd-block"><small>連結知識點</small><div>${kpIds(c).map(id=>POINTS.find(p=>p.id===id)).filter(Boolean).map(p=>btn('point',p.id,p.title)).join('')}</div></div><button type="button" class="kd-cta" id="kdOpen">查看完整課程資訊 ↗</button>`}
+  else if(st.sp){const p=st.sp;h=`<div class="kd-head"><i style="background:${CAT_COLOR[p.category]}"></i><span>${p.level} · ${esc(p.category)}</span></div><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><div class="kd-block"><small>支援銷售流程</small><div>${p.salesStages.length?p.salesStages.map(s=>`<span>${s}</span>`).join(''):'<span>跨流程基礎能力</span>'}</div></div><div class="kd-block"><small>相關課程</small><div>${courses.filter(c=>st.cc.has(c.id)).map(c=>btn('course',c.id,c.title)).join('')||'<span>暫無相關課程</span>'}</div></div>`}
+  d.innerHTML=h;
+  $$('#kgDetail [data-go]').forEach(b=>b.onclick=()=>{const [t,...r]=b.dataset.go.split(':');K.sel={t,id:r.join(':')};kRender()});
+  if($('#kdOpen'))$('#kdOpen').onclick=()=>openCourse(K.sel.id);
+}
+function kRender(){
+  const edges=kLines.length;
+  $('#kgCount').textContent=`${courses.length+POINTS.length+STAGES.length} 個節點 · ${edges} 條關係 · 拖曳可旋轉`;
+  kLegend();kDetail();kUpdate();
+}
+function kInit(){
+  const cv=$('#kgCanvas');
+  $('#kgWorld').onclick=e=>{if(K.moved){K.moved=false;return}const b=e.target.closest('[data-k]');if(!b)return;const [t,...r]=b.dataset.k.split(':');K.sel={t,id:r.join(':')};kRender()};
+  cv.addEventListener('pointerdown',e=>{if(e.button!==0||e.target.closest('button'))return;K.drag={x:e.clientX,y:e.clientY};K.moved=false;cv.setPointerCapture(e.pointerId);cv.classList.add('dragging')});
+  cv.addEventListener('pointermove',e=>{if(!K.drag)return;const dx=e.clientX-K.drag.x,dy=e.clientY-K.drag.y;if(Math.abs(dx)+Math.abs(dy)>1){K.yaw+=dx*.6;K.pitch-=dy*.6;K.drag.x=e.clientX;K.drag.y=e.clientY;kUpdate()}});
+  const end=e=>{K.drag=null;cv.classList.remove('dragging')};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  $('#kgQ').oninput=e=>{K.q=e.target.value;kRender()};
+  $('#kgRe').onclick=()=>{K.layout++;kBuild();kRender()};
+  $('#kgIn').onclick=()=>{K.zoom=Math.min(1.5,K.zoom+.12);kFit()};$('#kgOut').onclick=()=>{K.zoom=Math.max(.6,K.zoom-.12);kFit()};
+  $('#kgReset').onclick=()=>{K.zoom=1;K.yaw=0;K.pitch=0;K.sel=null;K.cat='全部';K.exp=null;K.q='';$('#kgQ').value='';kFit();kRender()};
+  if(window.ResizeObserver)new ResizeObserver(kFit).observe(cv);else window.addEventListener('resize',kFit);
+}
+
+/* ---------- render all ---------- */
+function renderAll(){
+  renderHero();renderScatter();renderTable();renderPaths();renderPersonas();
+  if(!$('#kgWorld').children.length||K.dirty){kBuild();K.dirty=false}else kBuild();
+  kFit();kRender();
+}
+function applyRole(){
+  $('#addTop').hidden=!canEdit;$('#addBottom').hidden=!canEdit;
+  $('#ctaTitle').textContent=canEdit?'新增課程，地圖會同步更新。':'課程清單由管理者維護。';
+}
+$('#addTop').onclick=()=>openForm(null);$('#addBottom').onclick=()=>openForm(null);
+initControls();kInit();renderAll();
+
+(async()=>{
+  const note=$('#syncNote');let timer=setTimeout(()=>{note.textContent='暫時連不上雲端資料，目前顯示內建課程，可能不是最新版本。'},10000);
+  try{const u=await claude.use('user');canEdit=u?!!(await u.can('data.write')):false}catch{canEdit=false}
+  applyRole();
+  let db=null;try{db=await claude.use('db')}catch{}
+  if(!db){clearTimeout(timer);note.textContent='未登入或無法連線，目前顯示內建課程（唯讀）。';return}
+  dbc=db.collection('courses');
+  dbc.onSnapshot(snap=>{
+    clearTimeout(timer);
+    if(!snap.empty)courses=snap.docs.map(d=>normCourse(d.data(),d.id)).sort((a,b)=>a.ord-b.ord);
+    if(K.sel&&((K.sel.t==='course'&&!byId(K.sel.id))))K.sel=null;
+    if(S.pc&&!byId(S.pc))S.pc=null;
+    note.textContent=canEdit?`已同步，共 ${courses.length} 門課程。你可以新增、編輯或刪除課程。`:`已同步，共 ${courses.length} 門課程。如需新增課程，請聯絡管理者開通編輯權限。`;
+    renderAll();
+  },()=>{clearTimeout(timer);note.textContent='雲端資料讀取失敗，目前顯示內建課程。'});
+})();
+</script>
